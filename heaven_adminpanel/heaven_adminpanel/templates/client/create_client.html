@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+#second {
+  visibility: collapse;
+}
+
+#hidden {
+  visibility: collapse;
+}
+
+#id_paid_account:checked ~  #hidden{
+  visibility: visible;
+}
+
+#id_paid_account:checked ~  #second{
+  visibility: visible;
+}
+
+</style>
+
+<form method="POST" class="post-form">
+        {% csrf_token %}
+        <div class="input-group">
+                <span class="input-group-text">First and last name</span>
+                {{ form.name }}
+                {{ form.surname }}
+        </div>
+        <div class="input-group flex-nowrap">
+                <span class="input-group-text" id="addon-wrapping">Country</span>
+                {{ form.country }}
+        </div>
+        <div class="input-group">
+                <span class="input-group-text">Only Fans Login and Password</span>
+                        {{ form.login_of }}
+                        {{ form.password_of }}
+        </div>
+
+        <div class="input-group">
+                <span class="input-group-text">Email and Email Password</span>
+                {{ form.of_email }}
+                {{ form.of_password_email }}
+        </div>
+
+        <p>Is it payd account?</p> {{ form.paid_account }}
+
+        <div class="input-group" id="hidden">
+                <span class="input-group-text">Login paid account and Password of paid account</span>
+                {{ form.login_of_paid_account }}
+                {{ form.password_of_paid_account }}
+                 </div>
+        <div class="input-group" id="second">
+                <span class="input-group-text">Email of paid account and Password of Email</span>
+                {{ form.email_of_paid_account }}
+                {{ form.password_of_email_paid_account }}
+        </div>
+        <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">Photo</span>
+                        {{ form.photo }}
+                </div>
+                <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon">Telegram</span>
+                        {{ form.telegram_photos_link }}
+                </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+{% endblock %}

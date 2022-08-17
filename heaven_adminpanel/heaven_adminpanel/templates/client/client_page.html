@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<form method="GET" class="get-form">
+
+
+
+  <div>
+<div class="card" style="width: 18rem;">
+  <img src="{{form.photo}}" class="card-img-top" alt="...">
+  <div class="card-body">
+    <h5 class="card-title">{{form.name}} {{form.surname}}</h5>
+    <p class="card-text"></p>
+    <a href="" class="btn btn-primary">Go somewhere</a>
+  </div>
+</div>
+
+    <div class="card" style="width: 18rem;">
+  <div class="card-header">
+
+  <ul class="list-group list-group-horizontal-lg">
+  <li class="list-group-item">   </li>
+  <li class="list-group-item">Login</li>
+  <li class="list-group-item">Password</li>
+</ul>
+<ul class="list-group list-group-horizontal-lg">
+  <li class="list-group-item">Onlyfans (Free Acc)</li>
+  <li class="list-group-item">{{form.login_of}}</li>
+  <li class="list-group-item">{{form.password_of}}</li>
+</ul>
+<ul class="list-group list-group-horizontal-lg">
+  <li class="list-group-item">Email & Log</li>
+  <li class="list-group-item">{{form.of_email}}</li>
+  <li class="list-group-item">{{form.of_password_email}}</li>
+</ul>
+<ul class="list-group list-group-horizontal-lg">
+  <li class="list-group-item">An item</li>
+  <li class="list-group-item">A second item</li>
+  <li class="list-group-item">A third item</li>
+</ul>
+<ul class="list-group list-group-horizontal-lg">
+  <li class="list-group-item">An item</li>
+  <li class="list-group-item">A second item</li>
+  <li class="list-group-item">A third item</li>
+</ul>
+<ul class="list-group list-group-horizontal-lg">
+  <li class="list-group-item">An item</li>
+  <li class="list-group-item">A second item</li>
+  <li class="list-group-item">A third item</li>
+</ul>
+
+
+  </div>
+
+
+</form>
+
+{% endblock %}

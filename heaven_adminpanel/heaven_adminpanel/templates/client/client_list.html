@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<form method="GET" class="get-form">
+  <div class="row">
+{% for client in form %}
+  <div class="col-sm-3">
+<div class="card" style="width: 18rem;">
+  <img src="{{client.photo}}" class="card-img-top" alt="...">
+  <div class="card-body">
+    <h5 class="card-title">{{client.name}} {{client.surname}}</h5>
+    <p class="card-text"></p>
+    <a href="{% url 'client_page' client.name %}" class="btn btn-primary">Открыть профиль</a>
+    <a href="{% url 'delete_client' client.id %}" class="btn btn-danger">Удалить профиль</a>
+  </div>
+</div>
+  </div>
+
+{% endfor %}
+    </div>
+</form>
+{% endblock %}
