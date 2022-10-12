@@ -8,89 +8,96 @@
 
 {% for table in form %}
 
-<table class="table table-bordered" >
+<table class="table table-bordered">
     <thead>
-  <th>Clients</th>
-    <th width="2%">   </th>
+    <th>Clients</th>
+    <th width="2%"></th>
     {% for i in month %}
     <th>{{i}}</th>
     {% endfor %}
-  </thead>
+    </thead>
     <tfoot>
-      <th>Sum</th>
-      <th>   </th>
-      {% for i in month %}
-      <th width="2%"></th>
-      {% endfor %}
-      </tfoot>
+    <th>Sum</th>
+    <th></th>
+    {% for i in month %}
+    <th width="2%"></th>
+    {% endfor %}
+    </tfoot>
 
 
-{% for client_table in table.values %}
+    {% for client_table in table.values %}
     {% if client_table.table.table_info.table_type == True %}
-    <tbody id = {{client_table.table.table_info.id}}>
-        <tr>
-        <th rowspan="2">{{client_table.table.table_info.client_name}} {{client_table.table.table_info.client_surname}}</th>
-            <td class="table_type">FP</td>
-            {% for i in month %}
-            <td  width="3%" class="day_of_month" onmouseover="this.style.backgroundColor='#FDF5E6'" onmouseout="this.style.backgroundColor='#ffffff'">
-                {% for info in client_table.table.table_data %}
-                {% if info.day == i%}
-                <p>{{info.data}}$</p>
-                {% endif %}
-                {% endfor %}
-            </td>
+    <tbody id={{client_table.table.table_info.id}}>
+    <tr>
+        <th rowspan="2">{{client_table.table.table_info.client_name}} {{client_table.table.table_info.client_surname}}
+        </th>
+        <td class="table_type">FP</td>
+        {% for i in month %}
+        <td width="3%" class="day_of_month" onmouseover="this.style.backgroundColor='#FDF5E6'"
+            onmouseout="this.style.backgroundColor='#ffffff'">
+            {% for info in client_table.table.table_data %}
+            {% if info.day == i%}
+            <p>{{info.data}}$</p>
+            {% endif %}
             {% endfor %}
-        </tr>
-        <tr>
-            <td class="table_type">PP</td>
-            {% for i in month %}
-            <td  width="3%" class="day_of_month" onmouseover="this.style.backgroundColor='#FDF5E6'" onmouseout="this.style.backgroundColor='#ffffff'">
-                {% for info in client_table.table.table_data %}
-                {% if info.day == i%}
-                <p>{{info.data}}$</p>
-                {% endif %}
-                {% endfor %}
-            </td>
+        </td>
+        {% endfor %}
+    </tr>
+    <tr>
+        <td class="table_type">PP</td>
+        {% for i in month %}
+        <td width="3%" class="day_of_month" onmouseover="this.style.backgroundColor='#FDF5E6'"
+            onmouseout="this.style.backgroundColor='#ffffff'">
+            {% for info in client_table.table.table_data %}
+            {% if info.day == i%}
+            <p>{{info.data}}$</p>
+            {% endif %}
             {% endfor %}
-        </tr>
-        </tbody>
+        </td>
+        {% endfor %}
+    </tr>
+    </tbody>
 
 
     {% else %}
-<tbody id = {{client_table.table.table_info.id}} >
-        <tr>
+    <tbody id={{client_table.table.table_info.id}}>
+    <tr>
         <th>{{client_table.table.table_info.client_name}} {{client_table.table.table_info.client_surname}}</th>
-            <td class="table_type">OP</td>
-            {% for i in month %}
-            <td  class="day_of_month" onmouseover="this.style.backgroundColor='#FDF5E6'" onmouseout="this.style.backgroundColor='#ffffff'">
-                {% for info in client_table.table.table_data %}
-                {% if info.day == i%}
-                <p id={{info.id}}>{{info.data}}$</p>
-                {% endif %}
-                {% endfor %}
-            </td>
+        <td class="table_type">OP</td>
+        {% for i in month %}
+        <td class="day_of_month" onmouseover="this.style.backgroundColor='#FDF5E6'"
+            onmouseout="this.style.backgroundColor='#ffffff'">
+            {% for info in client_table.table.table_data %}
+            {% if info.day == i%}
+            <p id={{info.id}}>{{info.data}}$</p>
+            {% endif %}
             {% endfor %}
-        </tr>
-        </tbody>
+        </td>
+        {% endfor %}
+    </tr>
+    </tbody>
     {% endif %}
-{% endfor %}
-{% endfor %}
+    {% endfor %}
+    {% endfor %}
 </table>
 <script>
     var a = document.getElementsByClassName("day_of_month")
 
-for ( let i = 0; i <  a.length; i++){
-    a[i].setAttribute('id', i +1 );
-    a[i].addEventListener('dblclick', (event) => {
-    if (!a[i].innerText.trim()) {
-        a[i].innerHTML='<form action="table_data/" method="POST"> {% csrf_token %} <input name="data"><input type="hidden" name="date" value=' + (i + 1) % 31 + '><input type="hidden" name="data_type" value='+  a[i].parentNode.querySelector(".table_type").textContent +'><input type="hidden" name="table" value='+ a[i].closest("tbody[id]").id +'><input type="submit" style="position: absolute; left: -9999px"/></form>';
-        }
-else {
-        var index = a[i].id
-        a[i].innerHTML='<form action='+ "table_data/" + index + "/" +' method="DELETE"> {% csrf_token %} <input name="data" value='+ a[i].innerText + '><input type="hidden" name="date" value=' + (i + 1) % 31 + '><input type="hidden" name="data_type" value='+  a[i].parentNode.querySelector(".table_type").textContent +'><input type="hidden" name="table" value='+ a[i].closest("tbody[id]").id +'><input type="submit" style="position: absolute; left: -9999px"/></form>';
-}
-});
-}
+    function cellForm(method, element, index) {
+        const action = method === "post" ? "table_data/" : `table_data/${element.id}`;
+        return `<form action="${action}" method="${method}"> {% csrf_token %} <input name="data" value='${element.innerText}'><input type="hidden" name="date" value='${(index + 1) % 31}'><input type="hidden" name="data_type" value='${element.parentNode.querySelector(".table_type").textContent}'><input type="hidden" name="table" value='${element.closest("tbody[id]").id}'><input type="submit" style="position: absolute; left: -9999px"/></form>`
+    }
+
+    for (let i = 0; i < a.length; i++) {
+        a[i].setAttribute('id', i + 1);
+        a[i].addEventListener('dblclick', () => {
+            if (!a[i].innerText.trim()) {
+                a[i].innerHTML = cellForm("post", a[i], i);
+            } else {
+                a[i].innerHTML = cellForm("put", a[i], i);
+            }
+        });
+    }
 </script>
 {% endblock %}
 

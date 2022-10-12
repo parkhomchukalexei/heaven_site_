@@ -154,6 +154,8 @@ class TableDataSet(viewsets.ModelViewSet):
     serializer_class = DataSerializer
 
     def create(self, request, *args, **kwargs):
+
+        print(request.data['date'])
         table_data = {"data": request.data['data'],"data_type":str(request.data['data_type']), "table": int(request.data['table']),
                       "date": date(month = 10, day= int(request.data['date']), year= 2022)}
 
