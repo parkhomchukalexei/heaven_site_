@@ -1,13 +1,16 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.views import View
+from rest_framework.decorators import action
+
 from .models import OnlyFansTable,TableData
 from .forms import CreateOnlyfansTable
 from users.models import Client,User
-from time import strftime
-from datetime import datetime
+from time import strftime, struct_time
+from datetime import datetime, date
 from rest_framework.views import APIView, Response
+from rest_framework import viewsets
 from .serializers import TableSerializer, DataSerializer
-
+import json
 
 
 class OnlyFansWorkpage(View):
@@ -18,16 +21,18 @@ class OnlyFansWorkpage(View):
     def days_in_month(self):
         month_list = {'January': 31, 'February': 29, 'March': 31, 'April': 30, 'May': 31, 'June': 30, 'July': 31,
         'August': 31, 'September': 30, 'October': 31, 'November': 30, 'December': 31}
+        #days = [ strftime('%d',i) for i in range(1, month_list[strftime('%B')] + 1)]
+        #print(days)
 
-        return range(1, month_list[strftime('%B')] + 1)
+        a = [str(i) for i in range(1, month_list[strftime('%B')] + 1)]
+        return a
 
 
     def get(self, request):
 
         context = {
-            'form': OnlyFansTable.objects.all(),
+            'form': json.loads(find()),
             'month': self.days_in_month(),
-            'data': self.get_data(1),
         }
         return render(request, self.template, context)
 
@@ -47,20 +52,6 @@ class OnlyFansWorkpage(View):
         new_data.save()
 
         return redirect('onlyfans_workpage')
-
-
-    def get_data(self, table_id):
-        data = TableData.objects.filter(table_id=int(table_id))
-        new_data = list(data)
-        print(new_data)
-        sorted_by_id = {}
-        for i in range(0, len(new_data)):
-            sorted_by_id[i] = (data.filter(table=i))
-        return sorted_by_id
-
-
-
-
 
 
 class CreateNewTable(View):
@@ -84,7 +75,7 @@ class CreateNewTable(View):
                 new_table.save()
             else:
                 new_table = OnlyFansTable(
-                    table_type = True,
+                    table_type=True,
                    client=Client.objects.filter(id=int(request.POST['client']))[0],
                    operator=User.objects.filter(id=int(request.POST['operator']))[0])
                 new_table.save()
@@ -92,19 +83,104 @@ class CreateNewTable(View):
 
 
 
-class TableAPIView(APIView):
+#class TableAPIView(APIView):
+#
+#    def get(self, request):
+#        all_tables = OnlyFansTable.objects.prefetch_related('tabledata_set').all()
+#        return Response({'tables': TableSerializer(all_tables, many=True).data})
+#
+#    def post(self,request):
+#        new_table = OnlyFansTable.objects.create(
+#         date=request.data['date'],
+#         table_type=request.data['table_type'],
+#         client=int(request.data['client_id']),
+#         operator=int(request.data['operator_id']))
+#        return Response({'new_table': TableSerializer(new_table).data})
+#
+#    def put(self,request):
+#        pass
+#
+#    def delete(self,request):
+#        deleted_table = OnlyFansTable.objects.filter(id=int(request.query_params['table_id']))
+#        deleted_table.delete()
+#        return Response({'deleted_table': TableSerializer(deleted_table).data})
 
-    def get(self, request):
-        all_tables = OnlyFansTable.objects.all()
-        return Response({'tables': TableSerializer(all_tables, many=True).data})
+
+#class TableDataAPIView(APIView):
+#
+#    def get(self, request):
+#        all_data = TableData.objects.all()
+#        return Response({'data': DataSerializer(all_data, many=True).data})
+#
+#    def post(self,request):
+#        print(request)
+#        return redirect('onlyfans-workpage')
+
+
+class TableViewSet(viewsets.ModelViewSet):
+    queryset = OnlyFansTable.objects.prefetch_related('tabledata_set').all()
+    serializer_class = TableSerializer
+
+
+def get_id_list():
+
+    data = (int(i.operator.pk) for i in OnlyFansTable.objects.all())
+    return tuple(set(data))
+
+
+def make_get():
+
+    data = {f'table_{a.id}': {'table':
+                                  {'table_info': TableSerializer(a).data,
+                                   f'table_data': DataSerializer(TableData.objects.filter(table_id = int(a.id)), many=True).data}
+                              }
+                 for a in
+            OnlyFansTable.objects.prefetch_related('tabledata_set').all()}
+    return data
+
+
+def find():
+
+    data = make_get()
+    id_list = get_id_list()
+    final_data = []
+    for i in id_list:
+        final_data.append({ key: value for key,value in data.items() if value['table']['table_info']['operator'] == i })
+    return json.dumps(final_data)
+
+
+class TableDataSet(viewsets.ModelViewSet):
+    queryset = TableData.objects.all()
+    serializer_class = DataSerializer
+
+    def create(self, request, *args, **kwargs):
+        table_data = {"data": request.data['data'],"data_type":str(request.data['data_type']), "table": int(request.data['table']),
+                      "date": date(month = 10, day= int(request.data['date']), year= 2022)}
+
+        serializer = DataSerializer(data=table_data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'status':'done'})
+        else: print(f"{serializer.errors} pidarasikiiiiiiiiiiii")
+
+
+    def perform_update(self, request, pk=None, *args, **kwargs):
+
+        def get_object(pk):
+            return TableData.objects.get(pk=pk)
+
+        td_object = get_object(pk=pk)
+        #table_data = {"data": request.data['data'],"data_type":str(request.data['data_type']), "table": int(request.data['table']),
+         #             "date": date(month = int(request.data['date'][5:-3]), day= int(request.data['day']), year= 2022)}
+
+        serializer = DataSerializer(td_object, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
 
 
 
-class TableDataAPIView(APIView):
 
-    def get(self, request):
-        all_data = TableData.objects.filter(id=int(request.query_params['table_id']))
-        return Response({'data': DataSerializer(all_data, many=True).data})
 
 
 

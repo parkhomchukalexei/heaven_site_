@@ -1,15 +1,10 @@
-$(".day_of_month").css("color", "red");
-$("p").css("color", "red");
+var a = document.getElementsByClassName("day_of_month")
 
 
-$.ajax({
-    url: 'get_table_data/2/',         /* Куда отправить запрос */
-    method: 'get',             /* Метод запроса (post или get) */
-    dataType: 'json',          /* Тип данных в ответе (xml, json, script, html). */     /* Данные передаваемые в массиве */
-    success: function(data){   /* функция которая будет выполнена после успешного запроса.  */
-	     alert(data); /* В переменной data содержится ответ от index.php. */
-    }
+for ( let i = 0; i <  a.length; i++){
+    a[i].addEventListener('dblclick', (event) => {
+        a[i].innerHTML='<form action="api/add_tabledata" method="POST">' + {% csrf_token %} + '<input name="data"><input type="hidden" name="date" value="1"><input type="hidden" name="data_type" value="{{info.data_type}}"><input type="hidden" name="table" value="{{info.table}}"><input type="submit" style="position: absolute; left: -9999px"/></form>';
 });
+}
 
 
-$(".day_of_month")

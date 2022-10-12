@@ -5,124 +5,93 @@
 
 <a class="btn btn-success" href="{%  url 'onlyfans_new_table'  %}" role="button">Create Table</a>
 
+
 {% for table in form %}
-    {% if table.table_type == 1%}
-    <p> {{table.operator}}</p>
-    <table class="table table-bordered">
-  <thead>
+
+<table class="table table-bordered" >
+    <thead>
   <th>Clients</th>
     <th width="2%">   </th>
     {% for i in month %}
     <th>{{i}}</th>
     {% endfor %}
   </thead>
-      <tfoot>
+    <tfoot>
       <th>Sum</th>
       <th>   </th>
       {% for i in month %}
-      <th width="2%" ></th>
+      <th width="2%"></th>
       {% endfor %}
       </tfoot>
 
-        <tbody>
+
+{% for client_table in table.values %}
+    {% if client_table.table.table_info.table_type == True %}
+    <tbody id = {{client_table.table.table_info.id}}>
         <tr>
-        <th rowspan="2">{{table.client.name}} {{table.client.surname}}</th>
-            <form method="GET">
-                <input type="hidden" name="table_id" value={{table.id}}>
-                <input type="hidden" name="data_type" value="FP">
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
-            <td width="2%">FP</td>
+        <th rowspan="2">{{client_table.table.table_info.client_name}} {{client_table.table.table_info.client_surname}}</th>
+            <td class="table_type">FP</td>
             {% for i in month %}
-            <td width="3%">
-                {% if data %}
-                <p>{{ i }} PIZDA</p>
-                <form method="POST" class="post-form">
-                    {% csrf_token %}
-                    <input name='value' type="text" style="width: 25px; height: 20px;">
-                    <input type="hidden" name ='day' value={{i}}>
-                    <input type="hidden" name ='type' value="FP">
-                    <input type="hidden" name ='table_id' value={{table.id}}>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </form>
-                {% else %}
-                {{ data }}
+            <td  width="3%" class="day_of_month" onmouseover="this.style.backgroundColor='#FDF5E6'" onmouseout="this.style.backgroundColor='#ffffff'">
+                {% for info in client_table.table.table_data %}
+                {% if info.day == i%}
+                <p>{{info.data}}$</p>
                 {% endif %}
+                {% endfor %}
             </td>
             {% endfor %}
         </tr>
         <tr>
-            <form method="GET" action="get_data">
-                <input type="hidden" name="table_id" value={{table.id}}>
-                <input type="hidden" name="data_type" value="PP">
-            </form>
-            <td width="2%">PP</td>
+            <td class="table_type">PP</td>
             {% for i in month %}
-            <td width="2%">
-                {% if data|length == 0 %}
-                <form method="POST" class="post-form">
-                    {% csrf_token %}
-                    <input name='value' type="text" style="width: 25px; height: 20px;">
-                    <input type="hidden" name ='day' value={{i}}>
-                    <input type="hidden" name ='type' value="PP">
-                    <input type="hidden" name ='table_id' value={{table.id}}>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </form>
-                {% else %}
-                {{ data }}
+            <td  width="3%" class="day_of_month" onmouseover="this.style.backgroundColor='#FDF5E6'" onmouseout="this.style.backgroundColor='#ffffff'">
+                {% for info in client_table.table.table_data %}
+                {% if info.day == i%}
+                <p>{{info.data}}$</p>
                 {% endif %}
+                {% endfor %}
             </td>
             {% endfor %}
         </tr>
         </tbody>
-</table>
-{% else %}
 
-<p> {{table.operator}}</p>
-    <table class="table table-bordered">
-  <thead>
-  <th>Clients</th>
-    <th width="2%">   </th>
-    {% for i in month %}
-    <th>{{i}}</th>
-    {% endfor %}
-  </thead>
-      <tfoot>
-      <th>Sum</th>
-      <th>   </th>
-      {% for i in month %}
-      <th width="2%" ></th>
-      {% endfor %}
-      </tfoot>
 
-        <tbody>
+    {% else %}
+<tbody id = {{client_table.table.table_info.id}} >
         <tr>
-        <th>{{table.client.name}} {{table.client.surname}}</th>
-            <td width="2%">OP</td>
-            <form method="GET">
-                <input type="hidden" name="table_id" value={{table.id}}>
-                <input type="hidden" name="data_type" value="OP">
-            </form>
+        <th>{{client_table.table.table_info.client_name}} {{client_table.table.table_info.client_surname}}</th>
+            <td class="table_type">OP</td>
             {% for i in month %}
-            <td  width="3%" class="day_of_month">
-                5
+            <td  class="day_of_month" onmouseover="this.style.backgroundColor='#FDF5E6'" onmouseout="this.style.backgroundColor='#ffffff'">
+                {% for info in client_table.table.table_data %}
+                {% if info.day == i%}
+                <p id={{info.id}}>{{info.data}}$</p>
+                {% endif %}
+                {% endfor %}
             </td>
             {% endfor %}
         </tr>
         </tbody>
-</table>
-{% endif %}
+    {% endif %}
 {% endfor %}
+{% endfor %}
+</table>
+<script>
+    var a = document.getElementsByClassName("day_of_month")
 
-</form>
-
-
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="{% static 'script.js' %}"></script>
-
+for ( let i = 0; i <  a.length; i++){
+    a[i].setAttribute('id', i +1 );
+    a[i].addEventListener('dblclick', (event) => {
+    if (!a[i].innerText.trim()) {
+        a[i].innerHTML='<form action="table_data/" method="POST"> {% csrf_token %} <input name="data"><input type="hidden" name="date" value=' + (i + 1) % 31 + '><input type="hidden" name="data_type" value='+  a[i].parentNode.querySelector(".table_type").textContent +'><input type="hidden" name="table" value='+ a[i].closest("tbody[id]").id +'><input type="submit" style="position: absolute; left: -9999px"/></form>';
+        }
+else {
+        var index = a[i].id
+        a[i].innerHTML='<form action='+ "table_data/" + index + "/" +' method="DELETE"> {% csrf_token %} <input name="data" value='+ a[i].innerText + '><input type="hidden" name="date" value=' + (i + 1) % 31 + '><input type="hidden" name="data_type" value='+  a[i].parentNode.querySelector(".table_type").textContent +'><input type="hidden" name="table" value='+ a[i].closest("tbody[id]").id +'><input type="submit" style="position: absolute; left: -9999px"/></form>';
+}
+});
+}
+</script>
 {% endblock %}
-
-
 
 

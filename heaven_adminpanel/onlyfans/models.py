@@ -12,7 +12,6 @@ class OnlyFansTable(models.Model):
     operator = models.ForeignKey('users.User', on_delete=models.DO_NOTHING)
 
 
-
 class TableData(models.Model):
 
     date = models.DateField()
