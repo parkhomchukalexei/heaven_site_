@@ -1,3 +1,4 @@
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, HttpResponse, redirect
 from django.views import View
 from rest_framework.decorators import action
@@ -162,23 +163,24 @@ class TableDataSet(viewsets.ModelViewSet):
         serializer = DataSerializer(data=table_data)
         if serializer.is_valid():
             serializer.save()
-            return Response({'status':'done'})
-        else: print(f"{serializer.errors} pidarasikiiiiiiiiiiii")
+            return HttpResponseRedirect(redirect_to='http://127.0.0.1:8000/onlyfans/')
+        else: print(f"{serializer.errors}")
 
 
-    def perform_update(self, request, pk=None, *args, **kwargs):
+    def partial_update(self, request, pk=None, *args, **kwargs):
 
         def get_object(pk):
             return TableData.objects.get(pk=pk)
 
         td_object = get_object(pk=pk)
-        #table_data = {"data": request.data['data'],"data_type":str(request.data['data_type']), "table": int(request.data['table']),
-         #             "date": date(month = int(request.data['date'][5:-3]), day= int(request.data['day']), year= 2022)}
 
-        serializer = DataSerializer(td_object, data=request.data)
+        serializer = DataSerializer(td_object, data={'data': request.data['data'], 'date': td_object.date,
+                                                     'data_type': td_object.data_type, 'table': int(td_object.table.pk) })
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            return Response({'status':'done'})
+                #HttpResponseRedirect(redirect_to='http://127.0.0.1:8000/onlyfans/')
+        else: print(serializer.errors)
 
 
 

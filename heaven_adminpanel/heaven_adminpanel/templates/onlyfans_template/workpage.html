@@ -84,17 +84,50 @@
     var a = document.getElementsByClassName("day_of_month")
 
     function cellForm(method, element, index) {
-        const action = method === "post" ? "table_data/" : `table_data/${element.id}`;
-        return `<form action="${action}" method="${method}"> {% csrf_token %} <input name="data" value='${element.innerText}'><input type="hidden" name="date" value='${(index + 1) % 31}'><input type="hidden" name="data_type" value='${element.parentNode.querySelector(".table_type").textContent}'><input type="hidden" name="table" value='${element.closest("tbody[id]").id}'><input type="submit" style="position: absolute; left: -9999px"/></form>`
+        const action = method === "post" ? "table_data/" : `${index}`;
+        return `<form action="${action}" id="${index}" method="${method}"> {% csrf_token %} <input name="data" value='${element.innerText}'><input type="hidden" name="date" value='${(index + 1) % 31}'><input type="hidden" name="data_type" value='${element.parentNode.querySelector(".table_type").textContent}'><input type="hidden" name="table" value='${element.closest("tbody[id]").id}'><input type="submit" style="position: absolute; left: -9999px"/></form>`
+    }
+
+    function putInput(element, index) {
+        return `<input value="${element.innerText}" id="${index}"> {% csrf_token %} `
+    }
+
+    function sendPut(inputValue, index, inputId,CSRFtoken){
+
+        const dayOfMonth = (index + 1) % 31;
+
+        fetch(`table_data/${inputId}/`,{
+        method:'PATCH',
+            headers:{
+            'Content-Type':'application/json',
+                'X-CSRFToken': CSRFtoken
+            },
+                body:JSON.stringify({
+            'x-csrf-token': CSRFtoken,
+                    'data': inputValue,
+        }),
+        }).then(
+            document.getElementById(inputId).innerText = 'hui')
+
     }
 
     for (let i = 0; i < a.length; i++) {
         a[i].setAttribute('id', i + 1);
+
         a[i].addEventListener('dblclick', () => {
             if (!a[i].innerText.trim()) {
                 a[i].innerHTML = cellForm("post", a[i], i);
             } else {
-                a[i].innerHTML = cellForm("put", a[i], i);
+                const index = a[i].getElementsByTagName('p')[0].id;
+                a[i].innerHTML = putInput(a[i], index);
+                const inputElement = a[i].getElementsByTagName("INPUT")[0];
+                const inputId = inputElement.id;
+                const token = a[i].getElementsByTagName('input')[1].value
+                inputElement.addEventListener("keypress", (event) => {
+                    if (event.code === "Enter") {
+                        sendPut(inputElement.value, index, inputId, token);
+                    }
+                })
             }
         });
     }
