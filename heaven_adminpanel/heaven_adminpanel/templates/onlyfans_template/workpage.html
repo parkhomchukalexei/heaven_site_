@@ -131,6 +131,18 @@
             }
         });
     }
+
+            table_list = document.getElementsByClassName('table table-bordered')
+            for (let i = 0; i < table_list.length; i++) {
+                days_list = table_list[i].getElementsByClassName('day_of_month')
+                for (let a = 0; a < days_list.length; a++){
+                    if (days_list[a].id % 30 === 1){
+                        console.log(days_list[a])
+                    }
+                }
+    }
+
+
 </script>
 {% endblock %}
 
