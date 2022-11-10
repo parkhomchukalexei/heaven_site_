@@ -12,4 +12,5 @@ urlpatterns = [
     path('', OnlyFansWorkpage.as_view(), name='onlyfans_workpage'),
     path('create_table/', CreateNewTable.as_view(), name='onlyfans_new_table'),
     path('', include(router.urls)),
+
 ]

@@ -7,7 +7,7 @@
 
 
 {% for table in form %}
-
+<div>
 <table class="table table-bordered">
     <thead>
     <th>Clients</th>
@@ -20,14 +20,13 @@
     <th>Sum</th>
     <th></th>
     {% for i in month %}
-    <th width="2%"></th>
+    <th id={{i}} width="2%"></th>
     {% endfor %}
     </tfoot>
 
-
     {% for client_table in table.values %}
     {% if client_table.table.table_info.table_type == True %}
-    <tbody id={{client_table.table.table_info.id}}>
+    <tbody name={{client_table.table.table_info.operator_name}} {{client_table.table.table_info.operator_surname}} id={{client_table.table.table_info.id}}>
     <tr>
         <th rowspan="2">{{client_table.table.table_info.client_name}} {{client_table.table.table_info.client_surname}}
         </th>
@@ -36,8 +35,8 @@
         <td width="3%" class="day_of_month" onmouseover="this.style.backgroundColor='#FDF5E6'"
             onmouseout="this.style.backgroundColor='#ffffff'">
             {% for info in client_table.table.table_data %}
-            {% if info.day == i%}
-            <p>{{info.data}}$</p>
+            {% if info.day == i and info.data_type == "FP" %}
+            <p id={{info.id}}>{{info.data}}$</p>
             {% endif %}
             {% endfor %}
         </td>
@@ -49,8 +48,8 @@
         <td width="3%" class="day_of_month" onmouseover="this.style.backgroundColor='#FDF5E6'"
             onmouseout="this.style.backgroundColor='#ffffff'">
             {% for info in client_table.table.table_data %}
-            {% if info.day == i%}
-            <p>{{info.data}}$</p>
+            {% if info.day == i and info.data_type == "PP" %}
+            <p id={{info.id}}>{{info.data}}$</p>
             {% endif %}
             {% endfor %}
         </td>
@@ -60,7 +59,7 @@
 
 
     {% else %}
-    <tbody id={{client_table.table.table_info.id}}>
+    <tbody name={{client_table.table.table_info.operator_name}} {{client_table.table.table_info.operator_surname}} id={{client_table.table.table_info.id}}>
     <tr>
         <th>{{client_table.table.table_info.client_name}} {{client_table.table.table_info.client_surname}}</th>
         <td class="table_type">OP</td>
@@ -76,38 +75,54 @@
         {% endfor %}
     </tr>
     </tbody>
+
     {% endif %}
     {% endfor %}
+    </table>
+     </div>
     {% endfor %}
-</table>
+
+
 <script>
     var a = document.getElementsByClassName("day_of_month")
+    var tables = document.getElementsByClassName('table table-bordered')
+    for (i = 0; i < tables.length; i++) {
+        tables[i].setAttribute('id', i)
+    }
 
-    function cellForm(method, element, index) {
+    function cellForm(method, element, index, daysInMonth) {
+        const dayOfMonth = (index + 1) % daysInMonth ? (index + 1) % daysInMonth : daysInMonth;
         const action = method === "post" ? "table_data/" : `${index}`;
-        return `<form action="${action}" id="${index}" method="${method}"> {% csrf_token %} <input name="data" value='${element.innerText}'><input type="hidden" name="date" value='${(index + 1) % 31}'><input type="hidden" name="data_type" value='${element.parentNode.querySelector(".table_type").textContent}'><input type="hidden" name="table" value='${element.closest("tbody[id]").id}'><input type="submit" style="position: absolute; left: -9999px"/></form>`
+        return `<form action="${action}" id="${index}" method="${method}"> {% csrf_token %} <input name="data" value='${element.innerText}'><input type="hidden" name="date" value='${dayOfMonth}'><input type="hidden" name="data_type" value='${element.parentNode.querySelector(".table_type").textContent}'><input type="hidden" name="table" value='${element.closest("tbody[id]").id}'><input type="submit" style="position: absolute; left: -9999px"/></form>`
     }
 
     function putInput(element, index) {
         return `<input value="${element.innerText}" id="${index}"> {% csrf_token %} `
     }
 
-    function sendPut(inputValue, index, inputId,CSRFtoken){
+    function sendPut(inputValue, index, inputId, CSRFtoken, dadElement) {
 
         const dayOfMonth = (index + 1) % 31;
 
-        fetch(`table_data/${inputId}/`,{
-        method:'PATCH',
-            headers:{
-            'Content-Type':'application/json',
+        const table_id = dadElement.parentNode.parentElement.parentElement.id
+        const day = dadElement.id
+
+
+        fetch(`table_data/${inputId}/`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
                 'X-CSRFToken': CSRFtoken
             },
-                body:JSON.stringify({
-            'x-csrf-token': CSRFtoken,
-                    'data': inputValue,
-        }),
+            body: JSON.stringify({
+                'x-csrf-token': CSRFtoken,
+                'data': inputValue,
+            }),
         }).then(
-            document.getElementById(inputId).innerText = 'hui')
+            dadElement.innerHTML = `<p>${inputValue}$</p>`
+        ).then(
+            write_sum_to_table(+table_id, +day % 30, 30)
+        )
 
     }
 
@@ -116,21 +131,74 @@
 
         a[i].addEventListener('dblclick', () => {
             if (!a[i].innerText.trim()) {
-                a[i].innerHTML = cellForm("post", a[i], i);
+                a[i].innerHTML = cellForm("post", a[i], i, 30);
             } else {
                 const index = a[i].getElementsByTagName('p')[0].id;
                 a[i].innerHTML = putInput(a[i], index);
                 const inputElement = a[i].getElementsByTagName("INPUT")[0];
+                const parentElement = inputElement.parentElement
                 const inputId = inputElement.id;
                 const token = a[i].getElementsByTagName('input')[1].value
                 inputElement.addEventListener("keypress", (event) => {
                     if (event.code === "Enter") {
-                        sendPut(inputElement.value, index, inputId, token);
+                        sendPut(inputElement.value, index, inputId, token, parentElement);
                     }
                 })
             }
         });
     }
+
+    table_list = document.getElementsByClassName('table table-bordered')
+    for (let i = 0; i < table_list.length; i++) {
+        const operatorname = table_list[i].getElementsByTagName('tbody')[0].attributes[0].value
+        table_list[i].parentElement.prepend(operatorname)
+        days_list = table_list[i].getElementsByTagName('tfoot')
+        for (let a of days_list) {
+            const b = a.getElementsByTagName('th')
+            for (let c of b){
+                if (c.id){
+                    write_sum_to_table(+i, +c.id, 30)
+                }
+
+            }
+
+        }
+    }
+
+    function write_sum_to_table(table_id, day, daysInMonth) {
+        const thWithoutId = 1;
+        let sum = 0;
+        let last_sum = 0;
+        const table = document.querySelectorAll("table.table-bordered")[table_id];
+        const sumCell = table.getElementsByTagName('tfoot')[0].getElementsByTagName('th')[day + thWithoutId];
+        const lastCell = table.getElementsByTagName('tfoot')[0].getElementsByTagName('th')[31];
+        const cells = table.getElementsByClassName("day_of_month");
+        for (let i of cells) {
+            if (i.id % daysInMonth === 0) {
+                const cellValue = +i.getElementsByTagName('p')[0]?.innerText.slice(0, -1).replace(',', '.')
+                if (cellValue) {
+                    last_sum += cellValue
+                    lastCell.innerHTML = `<p>${last_sum.toString().replace(".", ",")}$</p>`
+                }
+                else{
+                    sum += 0
+                    lastCell.innerHTML = `<p>${last_sum.toString().replace(".", ",")}$</p>`
+                }
+            }
+            if (i.id % daysInMonth === day) {
+                const cellValue = +i.getElementsByTagName('p')[0]?.innerText.slice(0, -1).replace(',', '.')
+                if (cellValue) {
+                    sum += cellValue
+                    sumCell.innerHTML = `<p>${sum.toString().replace(".", ",")}$</p>`
+                } else {
+                    sum += 0
+                    sumCell.innerHTML = `<p>${sum.toString().replace(".", ",")}$</p>`
+                }
+            }
+        }}
+
+
+
 </script>
 {% endblock %}
 

@@ -11,6 +11,15 @@
   visibility: collapse;
 }
 
+#payedaccount {
+        visibility: hidden;
+}
+
+.row{
+        margin: 3px;
+        padding: 3px;
+}
+
 #id_paid_account:checked ~  #hidden{
   visibility: visible;
 }
@@ -68,4 +77,183 @@
         <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 
+
+<form method="POST">
+        {% csrf_token %}
+<div class="card border-0 py-6 px-md-6">
+        <div class="card-body">
+                <h2 class="text-center mb-0">Создать клиентку</h2>
+
+        <div class="mb-3">
+                <br>
+                <div class="row">
+                        <div class="col-md">
+                                <label for="firstname" class="form-laber">
+                                        Имя
+                                </label>
+                                <input type="text" class="form-control" id="firstname" value="{{name}}" placeholder="Введите имя">
+
+                        </div>
+                        <div class="col-md">
+                                <label for="lastname" class="form-laber">
+                                        Фамилия
+                                </label>
+                                <input type="text" class="form-control" id="lastname" value="{{surname}}" placeholder="Введите фамилию">
+
+                        </div>
+                </div>
+                        <br>
+                <div class="row">
+                        <p  class="text-secondary text-center"> OnlyFans аккаунт</p>
+                        <div class="col-md">
+                                <label for="onlyfanslogin" class="form-laber">
+                                        Логин
+                                </label>
+                                <input type="text" class="form-control" value="{{login_of}}" id="onlyfanslogin" placeholder="Введите логин">
+
+                        </div>
+                        <div class="col-md">
+                                <label for="onlyfanspassword" class="form-laber">
+                                        Пароль
+                                </label>
+                                <input type="text" class="form-control" value="{{password_of}}" id="onlyfanspassword" placeholder="Введите пароль">
+                        </div>
+                        </div>
+                        <br>
+                        <div class="row">
+
+                        <p  class="text-secondary text-center"> OnlyFans аккаунт Email</p>
+
+                        <div class="col-md">
+                                <label for="onlyfansloginemail" class="form-laber">
+                                        Логин Email
+                                </label>
+                                <input type="text" class="form-control" value="{{of_email}}" id="onlyfansloginemail" placeholder="Введите логин">
+
+                        </div>
+                        <div class="col-md">
+                                <label for="onlyfanspasswordemail" class="form-laber">
+                                        Пароль Email
+                                </label>
+                                <input type="text" class="form-control" value="{{of_password_email}}" id="onlyfanspasswordemail" placeholder="Введите пароль">
+
+                        </div>
+
+                                <div class="row">
+
+                                <div class="col-md">
+                                        <br>
+                                <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" value="{{paid_account}}" id="payedaccountswitch">
+                        <label class="form-check-label" for="payedaccountswitch">Payed Account?</label>
+                                </div>
+                                </div>
+                                </div>
+
+                                <div class="row" id="payedaccount">
+
+                        <p  class="text-secondary text-center"> OnlyFans Payed аккаунт </p>
+
+                        <div class="col-md">
+                                <label for="onlyfanspayedlogin" class="form-laber">
+                                        Логин
+                                </label>
+                                <input type="text" class="form-control" value="{{login_of_paid_account}}" id="onlyfanspayedlogin" placeholder="Введите логин">
+
+                        </div>
+                        <div class="col-md">
+                                <label for="onlyfanspayedpassword" class="form-laber">
+                                        Пароль
+                                </label>
+                                <input type="text" class="form-control" value="{{password_of_paid_account}}" id="onlyfanspayedpassword" placeholder="Введите пароль">
+
+                        </div>
+                                        <div class="row">
+
+                        <div class="col-md">
+                                <label for="onlyfanspayedloginemail" class="form-laber">
+                                        Логин от почты
+                                </label>
+                                <input type="text" class="form-control" value="{{email_of_paid_account}}" id="onlyfanspayedloginemail" placeholder="Введите логин от почты">
+
+                        </div>
+                        <div class="col-md">
+                                <label for="onlyfanspayedpasswordemail" class="form-laber">
+                                        Пароль от почты
+                                </label>
+                                <input type="text" class="form-control" value="{{password_of_email_paid_account}}" id="onlyfanspayedpasswordemail" placeholder="Введите пароль от почты">
+
+                        </div>
+
+                </div>
+
+        </div>
+                                <div class="row">
+                                                <br>
+                        <div class="col-md">
+                                <label for="telegram" class="form-laber">
+                                        Telegram
+                                </label>
+                                <input type="text" class="form-control" value="{{telegram_photos_link}}" id="telegram" placeholder="Введите URL telegram">
+
+                        </div>
+                        <div class="col-md">
+                                <label for="photo" class="form-laber">
+                                        url photo
+                                </label>
+                                <input type="text" class="form-control" value="{{photo}}" id="photo" placeholder="URL photo">
+                        </div>
+
+                                        <br>
+
+        </div>  <br>
+                                <button type="submit" id='submit_button' class="btn btn-primary">Создать</button>
+
+</div>
+                </form>
+
+<script>
+
+        function activate_payed_account(){
+                if (document.getElementById('payedaccountswitch').checked === true) {
+                        document.getElementById('payedaccount').style.visibility = "visible";
+                         console.log(document.getElementById('firstname').value)
+                }
+                else {
+                        document.getElementById('payedaccount').style.visibility = "collapse";
+                }
+        }
+
+        document.getElementById('payedaccountswitch').addEventListener("click", activate_payed_account)
+        document.getElementById('submit_button').addEventListener('click', create_client)
+
+
+        function create_client(){
+                fetch(`/users/client_api/`, {
+            method: 'POST',
+            headers: {
+                    'X-CSRFToken': document.getElementsByName('csrfmiddlewaretoken')[1].value,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                'x-csrf-token': document.getElementsByName('csrfmiddlewaretoken')[1].value,
+                'name': document.getElementById('firstname').value,
+                    'lastname': document.getElementById('lastname').value,
+                    'onlyfanslogin': document.getElementById('onlyfanslogin').value,
+                    'onlyfanspassword' : document.getElementById('onlyfanspassword').value,
+                    'onlyfansloginemail' : document.getElementById('onlyfansloginemail').value,
+                    'onlyfanspasswordemail': document.getElementById('onlyfanspasswordemail').value,
+                    'onlyfanspayedlogin': document.getElementById('onlyfanspayedlogin').value,
+                    'onlyfanspayedpassword': document.getElementById('onlyfanspayedpassword').value,
+                    'onlyfanspayedloginemail': document.getElementById('onlyfanspayedloginemail').value,
+                    'onlyfanspayedpasswordemail': document.getElementById('onlyfanspayedpasswordemail').value,
+                    'telegram': document.getElementById('telegram').value,
+                    'photo': document.getElementById('photo').value,
+
+            }),
+        })
+        }
+
+
+</script>
 {% endblock %}

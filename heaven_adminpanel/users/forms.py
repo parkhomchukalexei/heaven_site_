@@ -28,3 +28,4 @@ class CreateClientForm(forms.ModelForm):
                   'email_of_paid_account','password_of_email_paid_account','photo', 'telegram_photos_link')
 
 
+

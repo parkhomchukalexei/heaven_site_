@@ -137,6 +137,7 @@ def make_get():
                               }
                  for a in
             OnlyFansTable.objects.prefetch_related('tabledata_set').all()}
+
     return data
 
 
@@ -156,7 +157,6 @@ class TableDataSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
 
-        print(request.data['date'])
         table_data = {"data": request.data['data'],"data_type":str(request.data['data_type']), "table": int(request.data['table']),
                       "date": date(month = 10, day= int(request.data['date']), year= 2022)}
 
@@ -179,7 +179,6 @@ class TableDataSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             serializer.save()
             return Response({'status':'done'})
-                #HttpResponseRedirect(redirect_to='http://127.0.0.1:8000/onlyfans/')
         else: print(serializer.errors)
 
 

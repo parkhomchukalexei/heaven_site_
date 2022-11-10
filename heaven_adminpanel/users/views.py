@@ -6,6 +6,8 @@ from .forms import CreateClientForm
 from django.views import View
 from users.forms import UserCreationForm
 from .models import Client
+from rest_framework.views import APIView, Response
+from rest_framework import viewsets
 
 
 class Register(View):
@@ -42,22 +44,12 @@ class CreateClient(View):
         context = {'form': form}
         return render(request, self.template_name, context)
 
-    def post(self, request):
 
-        form = CreateClientForm(request.POST)
+class ClientAPI(viewsets.ModelViewSet):
 
-        if form.is_valid:
-            print(form)
-            new_client = Client(name=form.data['name'], surname=form.data['surname'],
-                   country=form.data['country'], login_of=form.data['login_of'],
-                   password_of=form.data['password_of'],
-                   of_email=form.data['of_email'], of_password_email=form.data['of_password_email'],
-                   paid_account = bool(form.data['paid_account']),
-                   login_of_paid_account=form.data['login_of_paid_account'], password_of_paid_account=form.data['password_of_paid_account'],
-                    email_of_paid_account=form.data['email_of_paid_account'], password_of_email_paid_account=form.data['password_of_email_paid_account'],
-                    photo=form.data['photo'], telegram_photos_link=form.data['telegram_photos_link'])
-            new_client.save()
-            return redirect('home')
+    def create(self, request, *args, **kwargs):
+        print(request.data)
+
 
 
 class ClientList(View):
