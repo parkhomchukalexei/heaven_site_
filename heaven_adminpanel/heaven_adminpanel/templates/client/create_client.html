@@ -30,56 +30,6 @@
 
 </style>
 
-<form method="POST" class="post-form">
-        {% csrf_token %}
-        <div class="input-group">
-                <span class="input-group-text">First and last name</span>
-                {{ form.name }}
-                {{ form.surname }}
-        </div>
-        <div class="input-group flex-nowrap">
-                <span class="input-group-text" id="addon-wrapping">Country</span>
-                {{ form.country }}
-        </div>
-        <div class="input-group">
-                <span class="input-group-text">Only Fans Login and Password</span>
-                        {{ form.login_of }}
-                        {{ form.password_of }}
-        </div>
-
-        <div class="input-group">
-                <span class="input-group-text">Email and Email Password</span>
-                {{ form.of_email }}
-                {{ form.of_password_email }}
-        </div>
-
-        <p>Is it payd account?</p> {{ form.paid_account }}
-
-        <div class="input-group" id="hidden">
-                <span class="input-group-text">Login paid account and Password of paid account</span>
-                {{ form.login_of_paid_account }}
-                {{ form.password_of_paid_account }}
-                 </div>
-        <div class="input-group" id="second">
-                <span class="input-group-text">Email of paid account and Password of Email</span>
-                {{ form.email_of_paid_account }}
-                {{ form.password_of_email_paid_account }}
-        </div>
-        <div class="input-group mb-3">
-                <span class="input-group-text" id="basic-addon1">Photo</span>
-                        {{ form.photo }}
-                </div>
-                <div class="input-group mb-3">
-                <span class="input-group-text" id="basic-addon">Telegram</span>
-                        {{ form.telegram_photos_link }}
-                </div>
-
-        <button type="submit" class="btn btn-primary">Submit</button>
-</form>
-
-
-<form method="POST">
-        {% csrf_token %}
 <div class="card border-0 py-6 px-md-6">
         <div class="card-body">
                 <h2 class="text-center mb-0">Создать клиентку</h2>
@@ -207,10 +157,10 @@
                                         <br>
 
         </div>  <br>
+                                {% csrf_token %}
                                 <button type="submit" id='submit_button' class="btn btn-primary">Создать</button>
 
 </div>
-                </form>
 
 <script>
 
@@ -225,24 +175,25 @@
         }
 
         document.getElementById('payedaccountswitch').addEventListener("click", activate_payed_account)
-        document.getElementById('submit_button').addEventListener('click', create_client)
-
+        document.getElementById('submit_button').addEventListener("click", create_client)
+                console.log(document.getElementById('submit_button'))
 
         function create_client(){
                 fetch(`/users/client_api/`, {
             method: 'POST',
             headers: {
-                    'X-CSRFToken': document.getElementsByName('csrfmiddlewaretoken')[1].value,
+                    'X-CSRFToken': document.getElementsByName('csrfmiddlewaretoken')[0].value,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                'x-csrf-token': document.getElementsByName('csrfmiddlewaretoken')[1].value,
-                'name': document.getElementById('firstname').value,
+                'x-csrf-token': document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                    'name': document.getElementById('firstname').value,
                     'lastname': document.getElementById('lastname').value,
                     'onlyfanslogin': document.getElementById('onlyfanslogin').value,
                     'onlyfanspassword' : document.getElementById('onlyfanspassword').value,
                     'onlyfansloginemail' : document.getElementById('onlyfansloginemail').value,
                     'onlyfanspasswordemail': document.getElementById('onlyfanspasswordemail').value,
+                    'payedaccount': document.getElementById('payedaccountswitch').checked,
                     'onlyfanspayedlogin': document.getElementById('onlyfanspayedlogin').value,
                     'onlyfanspayedpassword': document.getElementById('onlyfanspayedpassword').value,
                     'onlyfanspayedloginemail': document.getElementById('onlyfanspayedloginemail').value,

@@ -6,7 +6,7 @@ from django.db import models
 
 class OnlyFansTable(models.Model):
 
-    date = models.DateField(auto_now=True)
+    date = models.DateField(default='01-01-2022', null= False, auto_now=False)
     table_type = models.BooleanField(default=False)
     client = models.ForeignKey('users.Client', on_delete=models.DO_NOTHING)
     operator = models.ForeignKey('users.User', on_delete=models.DO_NOTHING)

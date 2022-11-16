@@ -1,13 +1,15 @@
 from django.contrib.auth import authenticate, login
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, HttpResponse, redirect
 from .forms import CreateClientForm
 
 # Create your views here.
 from django.views import View
 from users.forms import UserCreationForm
-from .models import Client
+from users.models import Client
 from rest_framework.views import APIView, Response
 from rest_framework import viewsets
+from users.serializers import ClientSerializer
 
 
 class Register(View):
@@ -48,7 +50,20 @@ class CreateClient(View):
 class ClientAPI(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
-        print(request.data)
+        client_data = {'name' : request.data['name'], 'surname': request.data['lastname'],
+                       'login_of': request.data['onlyfanslogin'], 'password_of': request.data['onlyfanspassword'],
+                       'of_email': request.data['onlyfansloginemail'], 'of_password_email': request.data['onlyfanspasswordemail'],
+                       'paid_account': bool(request.data['payedaccount']), 'login_of_paid_account': request.data['onlyfanspayedlogin'],
+                       'password_of_paid_account': request.data['onlyfanspayedpassword'],
+                       'email_of_paid_account': request.data['onlyfanspayedloginemail'],
+                       'password_of_email_paid_account': request.data['onlyfanspayedpasswordemail'],
+                       'photo': request.data['photo'], 'telegram_photos_link': request.data['telegram']}
+
+        serializer = ClientSerializer(data=client_data)
+        if serializer.is_valid():
+            serializer.save()
+            return HttpResponseRedirect(redirect_to='')
+        else: print(f'{serializer.errors}')
 
 
 

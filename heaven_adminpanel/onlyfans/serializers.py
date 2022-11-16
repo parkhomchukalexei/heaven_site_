@@ -20,7 +20,7 @@ class DataSerializer(serializers.ModelSerializer):
 
 class TableSerializer(serializers.ModelSerializer):
 
-    table_information = DataSerializer(many=True, read_only=True)
+    #table_information = DataSerializer(many=True, read_only=True)
     client_surname = serializers.PrimaryKeyRelatedField(read_only=True, source= "client.surname")
     client_name = serializers.PrimaryKeyRelatedField(read_only=True, source= "client.name")
     operator_name = serializers.PrimaryKeyRelatedField(read_only=True, source= 'operator.username')

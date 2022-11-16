@@ -68,19 +68,28 @@ class CreateNewTable(View):
     def post(self, request):
 
         form = CreateOnlyfansTable(request.POST)
+
+
+        month = date(month = int(request.POST['month']), day=1, year= 2022)
+        print(month)
+
+
         if form.is_valid:
             if request.POST['table_type'] == '0':
                 new_table = OnlyFansTable(
+                    date = month,
                     client=Client.objects.filter(id=int(request.POST['client']))[0],
                     operator=User.objects.filter(id=int(request.POST['operator']))[0])
                 new_table.save()
             else:
                 new_table = OnlyFansTable(
+                    date = month,
                     table_type=True,
-                   client=Client.objects.filter(id=int(request.POST['client']))[0],
-                   operator=User.objects.filter(id=int(request.POST['operator']))[0])
+                    client=Client.objects.filter(id=int(request.POST['client']))[0],
+                    operator=User.objects.filter(id=int(request.POST['operator']))[0])
                 new_table.save()
         return redirect('onlyfans_workpage')
+
 
 
 
