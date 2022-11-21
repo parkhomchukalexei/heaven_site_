@@ -81,8 +81,8 @@ class ClientPage(View):
 
     template_name = 'client/client_page.html'
 
-    def get(self, request, name):
-        client = Client.objects.filter(name=name)
+    def get(self, request, client_id):
+        client = Client.objects.filter(id=client_id)
         context = {'form': client[0]}
         return render(request, self.template_name, context)
 

@@ -4,55 +4,89 @@
 
 <form method="GET" class="get-form">
 
+<div class="card mb-3" style="max-width: 1280px;">
+  <div class="row g-0">
+    <div class="col-md-4">
+      <img src="{{form.photo}}" class="img-fluid rounded-start" alt="...">
+    </div>
+    <div class="col-md-8">
+      <div class="card-body">
+        <h2 class="card-title">{{form.name}} {{form.surname}}</h2>
+        <div class="row">
+          <div class="col-md-3">
+          <label  for="onlyfanslogin">
+            Onlyfans Login
+          </label>
+          <p id="onlyfanslogin">{{form.login_of}}</p>
+          </div>
+          <div class="col-md-3">
+          <label  for="onlyfanspass">
+            Onlyfans pass
+          </label>
+          <p id="onlyfanspass">{{form.password_of}}</p>
+          </div>
+          <div class="row">
+            <div class="col-md-3">
+              <label  for="onlyfansemail">
+            Onlyfans Email
+          </label>
+          <p id="onlyfansemail">{{form.of_email}}</p>
+          </div>
+          <div class="col-md-3">
+          <label  for="onlyfansemailpass">
+            Onlyfans Email pass
+          </label>
+          <p id="onlyfansemailpass">{{form.of_password_email}}</p>
+            </div>
+          </div>
+
+          <div class="row">
+              <label  for="telegram">
+            Telegram photos
+          </label>
+          <p id="telegram">{{form.telegram_photos_link}}</p>
+
+          </div>
+
+          {% if form.paid_account %}
+          <div class="row">
+
+            <div class="col-md-3">
+          <label  for="onlyfanspaidlogin">
+            Onlyfans Login (Payed acc)
+          </label>
+          <p id="onlyfanspaidlogin">{{form.login_of_paid_account}}</p>
+          </div>
+          <div class="col-md-3">
+          <label  for="onlyfanspaidpass">
+            Onlyfans pass (Payed acc)
+          </label>
+          <p id="onlyfanspaidpass">{{form.password_of_paid_account}}</p>
+          </div>
+            </div>
 
 
-  <div>
-<div class="card" style="width: 18rem;">
-  <img src="{{form.photo}}" class="card-img-top" alt="...">
-  <div class="card-body">
-    <h5 class="card-title">{{form.name}} {{form.surname}}</h5>
-    <p class="card-text"></p>
-    <a href="" class="btn btn-primary">Go somewhere</a>
+
+          <div class="row">
+
+            <div class="col-md-3">
+          <label  for="onlyfanspaidemaillogin">
+            Onlyfans Email Login (Payed acc)
+          </label>
+          <p id="onlyfanspaidemaillogin">{{form.email_of_paid_account}}</p>
+          </div>
+          <div class="col-md-3">
+          <label  for="onlyfanspaidemailpass">
+            Onlyfans Email Pass (Payed acc)
+          </label>
+          <p id="onlyfanspaidemailpass">{{form.password_of_email_paid_account}}</p>
+          </div>
+            </div>
+          {% endif %}
+
+    </div>
   </div>
 </div>
-
-    <div class="card" style="width: 18rem;">
-  <div class="card-header">
-
-  <ul class="list-group list-group-horizontal-lg">
-  <li class="list-group-item">   </li>
-  <li class="list-group-item">Login</li>
-  <li class="list-group-item">Password</li>
-</ul>
-<ul class="list-group list-group-horizontal-lg">
-  <li class="list-group-item">Onlyfans (Free Acc)</li>
-  <li class="list-group-item">{{form.login_of}}</li>
-  <li class="list-group-item">{{form.password_of}}</li>
-</ul>
-<ul class="list-group list-group-horizontal-lg">
-  <li class="list-group-item">Email & Log</li>
-  <li class="list-group-item">{{form.of_email}}</li>
-  <li class="list-group-item">{{form.of_password_email}}</li>
-</ul>
-<ul class="list-group list-group-horizontal-lg">
-  <li class="list-group-item">An item</li>
-  <li class="list-group-item">A second item</li>
-  <li class="list-group-item">A third item</li>
-</ul>
-<ul class="list-group list-group-horizontal-lg">
-  <li class="list-group-item">An item</li>
-  <li class="list-group-item">A second item</li>
-  <li class="list-group-item">A third item</li>
-</ul>
-<ul class="list-group list-group-horizontal-lg">
-  <li class="list-group-item">An item</li>
-  <li class="list-group-item">A second item</li>
-  <li class="list-group-item">A third item</li>
-</ul>
-
-
-  </div>
-
 
 </form>
 

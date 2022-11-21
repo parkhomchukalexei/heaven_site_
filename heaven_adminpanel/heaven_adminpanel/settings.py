@@ -86,9 +86,9 @@ WSGI_APPLICATION = 'heaven_adminpanel.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'heaven',
+        'NAME': 'heaven_database',
         'USER': 'root',
-        'PASSWORD': 'admin',
+        'PASSWORD': 'heaven123',
         'PORT': '3306',
         'HOST': 'localhost',
     }

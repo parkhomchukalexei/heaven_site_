@@ -93,40 +93,6 @@ class CreateNewTable(View):
 
 
 
-#class TableAPIView(APIView):
-#
-#    def get(self, request):
-#        all_tables = OnlyFansTable.objects.prefetch_related('tabledata_set').all()
-#        return Response({'tables': TableSerializer(all_tables, many=True).data})
-#
-#    def post(self,request):
-#        new_table = OnlyFansTable.objects.create(
-#         date=request.data['date'],
-#         table_type=request.data['table_type'],
-#         client=int(request.data['client_id']),
-#         operator=int(request.data['operator_id']))
-#        return Response({'new_table': TableSerializer(new_table).data})
-#
-#    def put(self,request):
-#        pass
-#
-#    def delete(self,request):
-#        deleted_table = OnlyFansTable.objects.filter(id=int(request.query_params['table_id']))
-#        deleted_table.delete()
-#        return Response({'deleted_table': TableSerializer(deleted_table).data})
-
-
-#class TableDataAPIView(APIView):
-#
-#    def get(self, request):
-#        all_data = TableData.objects.all()
-#        return Response({'data': DataSerializer(all_data, many=True).data})
-#
-#    def post(self,request):
-#        print(request)
-#        return redirect('onlyfans-workpage')
-
-
 class TableViewSet(viewsets.ModelViewSet):
     queryset = OnlyFansTable.objects.prefetch_related('tabledata_set').all()
     serializer_class = TableSerializer
