@@ -1,3 +1,5 @@
+import re
+
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, HttpResponse, redirect
 from django.views import View
@@ -132,6 +134,14 @@ class TableDataSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
 
+
+        def validate(value):
+            if re.fullmatch(r'\d+,\d+$',value):
+                print('value podhodit')
+            else: print('hui')
+
+        validate(request.data['data'])
+        print(request.data['data'])
         table_data = {"data": request.data['data'],"data_type":str(request.data['data_type']), "table": int(request.data['table']),
                       "date": date(month = 10, day= int(request.data['date']), year= 2022)}
 
@@ -139,11 +149,11 @@ class TableDataSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             serializer.save()
             return HttpResponseRedirect(redirect_to='http://127.0.0.1:8000/onlyfans/')
-        else: print(f"{serializer.errors}")
+        else: return HttpResponse(serializer.error_messages)
 
 
     def partial_update(self, request, pk=None, *args, **kwargs):
-
+        print(request.data['data'])
         def get_object(pk):
             return TableData.objects.get(pk=pk)
 

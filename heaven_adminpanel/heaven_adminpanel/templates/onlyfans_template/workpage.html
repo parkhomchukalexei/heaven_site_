@@ -93,11 +93,11 @@
     function cellForm(method, element, index, daysInMonth) {
         const dayOfMonth = (index + 1) % daysInMonth ? (index + 1) % daysInMonth : daysInMonth;
         const action = method === "post" ? "table_data/" : `${index}`;
-        return `<form action="${action}" id="${index}" method="${method}"> {% csrf_token %} <input name="data" value='${element.innerText}'><input type="hidden" name="date" value='${dayOfMonth}'><input type="hidden" name="data_type" value='${element.parentNode.querySelector(".table_type").textContent}'><input type="hidden" name="table" value='${element.closest("tbody[id]").id}'><input type="submit" style="position: absolute; left: -9999px"/></form>`
+        return `<form action="${action}" id="${index}" method="${method}"> {% csrf_token %} <input placeholder="Enter some text" pattern="^\\d{0,6}[.|,]?\\d{1,2}[$]*$" name="data" value='${element.innerText}' required/><div id="error-msg" class="error-msg d-none">You've entered incorrect value</div><input type="hidden" name="date" value='${dayOfMonth}'><input type="hidden" name="data_type" value='${element.parentNode.querySelector(".table_type").textContent}'><input type="hidden" name="table" value='${element.closest("tbody[id]").id}'><input type="submit" style="position: absolute; left: -9999px"/></form>`
     }
 
     function putInput(element, index) {
-        return `<input value="${element.innerText}" id="${index}"> {% csrf_token %} `
+        return `<input name="data" pattern="^\\d{0,6}[.|,]?\\d{1,2}[$]*$" value="${element.innerText}" id="${index}" required/> {% csrf_token %}<div id="error-msg" class="error-msg d-none">You've entered incorrect value</div> `
     }
 
     function sendPut(inputValue, index, inputId, CSRFtoken, dadElement) {
@@ -141,7 +141,7 @@
                 const token = a[i].getElementsByTagName('input')[1].value
                 inputElement.addEventListener("keypress", (event) => {
                     if (event.code === "Enter") {
-                        sendPut(inputElement.value, index, inputId, token, parentElement);
+                        sendPut(inputElement.value.replace('$', '').replace(',', '.'), index, inputId, token, parentElement);
                     }
                 })
             }
@@ -175,31 +175,65 @@
         const cells = table.getElementsByClassName("day_of_month");
         for (let i of cells) {
             if (i.id % daysInMonth === 0) {
-                const cellValue = +i.getElementsByTagName('p')[0]?.innerText.slice(0, -1).replace(',', '.')
+                const cellValue = +i.getElementsByTagName('p')[0]?.innerText.replace('$', '').replace(',', '.')
                 if (cellValue) {
                     last_sum += cellValue
-                    lastCell.innerHTML = `<p>${last_sum.toString().replace(".", ",")}$</p>`
+                    lastCell.innerHTML = `<p>${last_sum.toString().replace('$', '').replace(".", ",")}$</p>`
                 }
                 else{
                     sum += 0
-                    lastCell.innerHTML = `<p>${last_sum.toString().replace(".", ",")}$</p>`
+                    lastCell.innerHTML = `<p>${last_sum.toString().replace('$', '').replace(".", ",")}$</p>`
                 }
             }
             if (i.id % daysInMonth === day) {
-                const cellValue = +i.getElementsByTagName('p')[0]?.innerText.slice(0, -1).replace(',', '.')
+                const cellValue = +i.getElementsByTagName('p')[0]?.innerText.replace('$', '').replace(',', '.')
                 if (cellValue) {
                     sum += cellValue
-                    sumCell.innerHTML = `<p>${sum.toString().replace(".", ",")}$</p>`
+                    sumCell.innerHTML = `<p>${sum.toString().replace('$', '').replace(".", ",")}$</p>`
                 } else {
                     sum += 0
-                    sumCell.innerHTML = `<p>${sum.toString().replace(".", ",")}$</p>`
+                    sumCell.innerHTML = `<p>${sum.toString().replace('$', '').replace(".", ",")}$</p>`
                 }
             }
         }}
 
+    var input = document.querySelector('input');
+var log = document.getElementById('log');
+var errorMsg = document.getElementById("error-msg");
+
+input.oninput = function() {
+  document.getElementById('result').innerHTML = input.value;
+  var regular = /^\d{0,6}[.|,]?\d{1,2}[$]*$/;
+  if(regular.test(input.value)) {
+    errorMsg.classList.remove("d-none");
+  } else {
+    errorMsg.classList.add("d-none");
+  }
+};
+
+
 
 
 </script>
+
+<style>
+    input {
+  border-radius: 5px;
+  outline: none
+}
+
+input:invalid {
+  border: 2px solid red;
+}
+
+.d-none {
+  display: none;
+}
+
+.error-msg {
+  color: red;
+}
+</style>
 {% endblock %}
 
 
