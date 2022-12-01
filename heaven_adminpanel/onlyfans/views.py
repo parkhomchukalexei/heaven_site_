@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, HttpResponse, redirect
 from django.views import View
@@ -14,8 +15,8 @@ from .serializers import TableSerializer, DataSerializer
 import json
 
 
-class OnlyFansWorkpage(View):
-
+class OnlyFansWorkpage(LoginRequiredMixin,PermissionRequiredMixin,View):
+    permission_required = 'onlyfans.view_onlyfanstable'
     template = 'onlyfans_template/workpage.html'
 
 
@@ -30,7 +31,6 @@ class OnlyFansWorkpage(View):
 
 
     def get(self, request):
-
         context = {
             'form': json.loads(find()),
             'month': self.days_in_month(),
@@ -54,9 +54,8 @@ class OnlyFansWorkpage(View):
 
         return redirect('onlyfans_workpage')
 
-
-class CreateNewTable(View):
-
+class CreateNewTable(LoginRequiredMixin,PermissionRequiredMixin,View):
+    permission_required = 'onlyfans.onlyfans_table.can_add'
     template = 'onlyfans_template/create_table.html'
 
     def get(self, request):
@@ -151,11 +150,11 @@ class TableDataSet(viewsets.ModelViewSet):
 
         serializer = DataSerializer(td_object, data={'data': request.data['data'], 'date': td_object.date,
                                                      'data_type': td_object.data_type, 'table': int(td_object.table.pk) })
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response({'status':'done'})
-        else: print(serializer.errors)
-
+        else:
+            return Response(serializer.errors)
 
 
 

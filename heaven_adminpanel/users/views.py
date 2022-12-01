@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, HttpResponse, redirect
 from .forms import CreateClientForm
@@ -38,7 +39,7 @@ class Register(View):
         return render(request, self.template_name, context)
 
 
-class CreateClient(View):
+class CreateClient(LoginRequiredMixin,View):
     template_name = 'client/create_client.html'
 
     def get(self, request):
@@ -67,7 +68,7 @@ class ClientAPI(viewsets.ModelViewSet):
 
 
 
-class ClientList(View):
+class ClientList(LoginRequiredMixin,View):
 
     template_name = 'client/client_list.html'
 
@@ -77,7 +78,7 @@ class ClientList(View):
         return render(request, self.template_name, context)
 
 
-class ClientPage(View):
+class ClientPage(LoginRequiredMixin,View):
 
     template_name = 'client/client_page.html'
 
@@ -87,7 +88,7 @@ class ClientPage(View):
         return render(request, self.template_name, context)
 
 
-class DeleteClient(View):
+class DeleteClient(LoginRequiredMixin,View):
 
     def get(self,request, client_id):
         client_to_delete = Client.objects.filter(id=client_id)
