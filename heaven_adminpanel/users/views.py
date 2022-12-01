@@ -63,7 +63,7 @@ class ClientAPI(viewsets.ModelViewSet):
         serializer = ClientSerializer(data=client_data)
         if serializer.is_valid():
             serializer.save()
-            return HttpResponseRedirect(redirect_to='')
+            return HttpResponseRedirect(redirect_to='../../users/client_list/')
         else: print(f'{serializer.errors}')
 
 
