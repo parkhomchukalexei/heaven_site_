@@ -23,8 +23,6 @@ class OnlyFansWorkpage(LoginRequiredMixin,PermissionRequiredMixin,View):
     def days_in_month(self):
         month_list = {'January': 31, 'February': 29, 'March': 31, 'April': 30, 'May': 31, 'June': 30, 'July': 31,
         'August': 31, 'September': 30, 'October': 31, 'November': 30, 'December': 31}
-        #days = [ strftime('%d',i) for i in range(1, month_list[strftime('%B')] + 1)]
-        #print(days)
 
         a = [str(i) for i in range(1, month_list[strftime('%B')] + 1)]
         return a
@@ -35,6 +33,10 @@ class OnlyFansWorkpage(LoginRequiredMixin,PermissionRequiredMixin,View):
             'form': json.loads(find()),
             'month': self.days_in_month(),
         }
+
+
+        print(get_by_operator_id_and_month(1,"07"))
+
         return render(request, self.template, context)
 
 
@@ -54,6 +56,7 @@ class OnlyFansWorkpage(LoginRequiredMixin,PermissionRequiredMixin,View):
 
         return redirect('onlyfans_workpage')
 
+
 class CreateNewTable(LoginRequiredMixin,PermissionRequiredMixin,View):
     permission_required = 'onlyfans.onlyfans_table.can_add'
     template = 'onlyfans_template/create_table.html'
@@ -70,7 +73,6 @@ class CreateNewTable(LoginRequiredMixin,PermissionRequiredMixin,View):
 
 
         month = date(month = int(request.POST['month']), day=1, year= 2022)
-        print(month)
 
 
         if form.is_valid:
@@ -123,6 +125,34 @@ def find():
     for i in id_list:
         final_data.append({ key: value for key,value in data.items() if value['table']['table_info']['operator'] == i })
     return json.dumps(final_data)
+
+
+
+@action(methods=['get'], detail=True)
+def get_by_operator_id(self, request, operator_id):
+    data = json.loads(find())
+    final_data = []
+    for i in data:
+        final_data.append({ key: value for key,value in i.items() if value['table']['table_info']['operator'] == operator_id })
+    return Response( {'data':json.dumps(list(filter(None, final_data)))})
+
+@action(methods=['get'], detail=False)
+def get_by_client_id(self,request, pk=None):
+    print(pk)
+    data = json.loads(find())
+    final_data = []
+    for i in data:
+        final_data.append(
+            {key: value for key, value in i.items() if value['table']['table_info']['client'] == client_id})
+    return json.dumps(list(filter(None, final_data)))
+@action(methods=['get'], detail=True)
+def get_by_operator_id_and_month(operator_id,month):
+    data = json.loads(find())
+    final_data = []
+    for i in data:
+        final_data.append({ key: value for key,value in i.items() if value['table']['table_info']['operator'] == operator_id
+                            and value['table']['table_info']['date'][5:7] == month})
+    return json.dumps(list(filter(None, final_data)))
 
 
 class TableDataSet(viewsets.ModelViewSet):

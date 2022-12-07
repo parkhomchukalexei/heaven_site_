@@ -1,11 +1,12 @@
 
 from django.urls import path, include
-from onlyfans.views import OnlyFansWorkpage, CreateNewTable,TableDataSet
+from onlyfans.views import OnlyFansWorkpage, CreateNewTable,TableViewSet
 from rest_framework import routers
 from onlyfans import views
 
 router = routers.DefaultRouter()
 router.register(r'table_data', views.TableDataSet)
+router.register(r'table', views.TableViewSet, basename='table')
 
 
 urlpatterns = [
