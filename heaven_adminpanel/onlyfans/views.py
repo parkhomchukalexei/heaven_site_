@@ -128,7 +128,7 @@ def find():
 
 
 
-@action(methods=['get'], detail=True)
+@action(methods=['GET'], detail=True, url_path='/get_by_operator_id')
 def get_by_operator_id(self, request, operator_id):
     data = json.loads(find())
     final_data = []
@@ -136,7 +136,7 @@ def get_by_operator_id(self, request, operator_id):
         final_data.append({ key: value for key,value in i.items() if value['table']['table_info']['operator'] == operator_id })
     return Response( {'data':json.dumps(list(filter(None, final_data)))})
 
-@action(methods=['get'], detail=False)
+@action(methods=['GET'], detail=False, url_path='/get_data')
 def get_by_client_id(self,request, pk=None):
     print(pk)
     data = json.loads(find())
