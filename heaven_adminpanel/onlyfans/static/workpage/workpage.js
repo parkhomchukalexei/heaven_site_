@@ -5,16 +5,30 @@ var a = document.getElementsByClassName("day_of_month")
         tables[i].setAttribute('id', i)
     }
 
+    function has_perms() {
+        const all_perms = perms
+        if (all_perms.includes('onlyfans.add_tabledata')) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+
     function cellForm(method, element, index, daysInMonth) {
         const dayOfMonth = (index + 1) % daysInMonth ? (index + 1) % daysInMonth : daysInMonth;
         const action = method === "post" ? "table_data/" : `${index}`;
-        console.log("${{perm.assets}}")
-        return `<form action="${action}" id="${index}" method="${method}"><input type="hidden" name="csrfmiddlewaretoken" value="${mytoken}"><input name="data" value='${element.innerText}'><input type="hidden" name="date" value='${dayOfMonth}'><input type="hidden" name="data_type" value='${element.parentNode.querySelector(".table_type").textContent}'><input type="hidden" name="table" value='${element.closest("tbody[id]").id}'><input type="submit" style="position: absolute; left: -9999px"/></form>`
-    }
+        const can_add = has_perms()
+        if (can_add) {
+            return `<form action="${action}" id="${index}" method="${method}"><input type="hidden" name="csrfmiddlewaretoken" value="${mytoken}"><input name="data" value='${element.innerText}'><input type="hidden" name="date" value='${dayOfMonth}'><input type="hidden" name="data_type" value='${element.parentNode.querySelector(".table_type").textContent}'><input type="hidden" name="table" value='${element.closest("tbody[id]").id}'><input type="submit" style="position: absolute; left: -9999px"/></form>`
+        }}
 
     function putInput(element, index) {
-        return `<input value="${element.innerText}" id="${index}"> <input type="hidden" name="csrfmiddlewaretoken" value="${mytoken}">`
-    }
+        const can_change = has_perms()
+        if (can_change) {
+            return `<input value="${element.innerText}" id="${index}"> <input type="hidden" name="csrfmiddlewaretoken" value="${mytoken}">`
+        }}
 
     function sendPut(inputValue, index, inputId, CSRFtoken, dadElement) {
 
@@ -50,7 +64,8 @@ var a = document.getElementsByClassName("day_of_month")
 
     for (let i = 0; i < a.length; i++) {
         a[i].setAttribute('id', i + 1);
-
+        const has_perm = has_perms()
+        if (has_perm){
         a[i].addEventListener('dblclick', () => {
             if (!a[i].innerText.trim()) {
                 a[i].innerHTML = cellForm("post", a[i], i, 31);
@@ -67,7 +82,7 @@ var a = document.getElementsByClassName("day_of_month")
                     }
                 })
             }
-        });
+        });}
     }
 
     table_list = document.getElementsByClassName('table table-bordered')
@@ -118,5 +133,6 @@ var a = document.getElementsByClassName("day_of_month")
                 }
             }
         }}
+
 
 

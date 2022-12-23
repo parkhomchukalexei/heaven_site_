@@ -19,6 +19,13 @@ class OnlyFansWorkpage(LoginRequiredMixin,PermissionRequiredMixin,View):
     permission_required = 'onlyfans.view_onlyfanstable'
     template = 'onlyfans_template/workpage.html'
 
+    def get_by_operator_id(self, pk):
+        data = json.loads(find())
+        final_data = []
+        for i in data:
+            final_data.append(
+                {key: value for key, value in i.items() if value['table']['table_info']['operator'] == int(pk)})
+        return json.dumps(list(filter(None, final_data)))
 
     def days_in_month(self):
         month_list = {'January': 31, 'February': 29, 'March': 31, 'April': 30, 'May': 31, 'June': 30, 'July': 31,
@@ -29,15 +36,25 @@ class OnlyFansWorkpage(LoginRequiredMixin,PermissionRequiredMixin,View):
 
 
     def get(self, request):
-        context = {
-            'form': json.loads(find()),
-            'month': self.days_in_month(),
-        }
+
+        if 'Operator' in str(request.user.groups.all()):
+            context = {
+                'form': json.loads(self.get_by_operator_id(pk = request.user.pk)),
+                'month': self.days_in_month(),
+            }
+            return render(request, self.template, context)
+
+        else:
+            context = {
+                'form': json.loads(find()),
+                'month': self.days_in_month(),
+            }
+            return render(request, self.template, context)
 
 
-        print(get_by_operator_id_and_month(1,"07"))
+        #print(get_by_operator_id_and_month(1,"07"))
 
-        return render(request, self.template, context)
+
 
 
     def post(self,request):
@@ -55,6 +72,7 @@ class OnlyFansWorkpage(LoginRequiredMixin,PermissionRequiredMixin,View):
         new_data.save()
 
         return redirect('onlyfans_workpage')
+
 
 
 class CreateNewTable(LoginRequiredMixin,PermissionRequiredMixin,View):
@@ -92,12 +110,40 @@ class CreateNewTable(LoginRequiredMixin,PermissionRequiredMixin,View):
         return redirect('onlyfans_workpage')
 
 
-
-
 class TableViewSet(viewsets.ModelViewSet):
     queryset = OnlyFansTable.objects.prefetch_related('tabledata_set').all()
     serializer_class = TableSerializer
 
+    @action(methods=['GET'], detail=True)
+    def get_by_operator_id(self, request, pk):
+        data = json.loads(find())
+        final_data = []
+        for i in data:
+            final_data.append(
+                {key: value for key, value in i.items() if value['table']['table_info']['operator'] == int(pk)})
+        return Response({'data': json.dumps(list(filter(None, final_data)))})
+
+    @action(methods=['GET'], detail=True)
+    def get_by_client_id(self, request, pk):
+        print(pk)
+        data = json.loads(find())
+        final_data = []
+        for i in data:
+            final_data.append(
+                {key: value for key, value in i.items() if value['table']['table_info']['client'] == int(pk)})
+        return Response({'data' : json.dumps(list(filter(None, final_data)))})
+
+    @action(methods=['get'], detail=True,)
+    def get_by_operator_id_and_month(self, request, pk):
+        data = json.loads(find())
+        final_data = []
+        print(request.args.get()) # Я остановился тут, доделать считывание аргумента, надо передать через ГЕТ запрос правильно
+        #month = request['month']
+        for i in data:
+            final_data.append(
+                {key: value for key, value in i.items() if value['table']['table_info']['operator'] == int(pk)
+                 and value['table']['table_info']['date'][5:7] == 1})
+        return Response({'data': json.dumps(list(filter(None, final_data)))})
 
 def get_id_list():
 
@@ -126,33 +172,6 @@ def find():
         final_data.append({ key: value for key,value in data.items() if value['table']['table_info']['operator'] == i })
     return json.dumps(final_data)
 
-
-
-@action(methods=['GET'], detail=True, url_path='/get_by_operator_id')
-def get_by_operator_id(self, request, operator_id):
-    data = json.loads(find())
-    final_data = []
-    for i in data:
-        final_data.append({ key: value for key,value in i.items() if value['table']['table_info']['operator'] == operator_id })
-    return Response( {'data':json.dumps(list(filter(None, final_data)))})
-
-@action(methods=['GET'], detail=False, url_path='/get_data')
-def get_by_client_id(self,request, pk=None):
-    print(pk)
-    data = json.loads(find())
-    final_data = []
-    for i in data:
-        final_data.append(
-            {key: value for key, value in i.items() if value['table']['table_info']['client'] == client_id})
-    return json.dumps(list(filter(None, final_data)))
-@action(methods=['get'], detail=True)
-def get_by_operator_id_and_month(operator_id,month):
-    data = json.loads(find())
-    final_data = []
-    for i in data:
-        final_data.append({ key: value for key,value in i.items() if value['table']['table_info']['operator'] == operator_id
-                            and value['table']['table_info']['date'][5:7] == month})
-    return json.dumps(list(filter(None, final_data)))
 
 
 class TableDataSet(viewsets.ModelViewSet):

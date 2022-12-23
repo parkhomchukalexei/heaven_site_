@@ -3,7 +3,9 @@
 {% block content %}
 {% load static %}
 
+{% if perms.onlyfans_table.can_add %}
 <a class="btn btn-success" href="{%  url 'onlyfans_new_table'  %}" role="button">Create Table</a>
+{% endif %}
 <p> {% csrf_token %}</p>
 
 {% for table in form %}
@@ -82,11 +84,13 @@
      </div>
     {% endfor %}
 
-
-<script src="/static/workpage/workpage.js"></script>
+<script>
+    var perms = "{{ perms.assets }}";
+</script>
+<script src="/static/workpage/workpage.js">
+</script>
 <script>
     var mytoken = "{{ csrf_token }}";
-    console.log( "{{ perm.assets }}");
 </script>
 
 {% endblock %}

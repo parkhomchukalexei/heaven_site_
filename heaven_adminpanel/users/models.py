@@ -23,6 +23,6 @@ class Client(models.Model):
     password_of_email_paid_account = models.CharField(max_length=255, null=True, blank=True)
     photo = models.CharField(max_length=255, null=True)
     telegram_photos_link = models.CharField(max_length=255, null=True)
-
+    managers = models.ManyToManyField(User)
 
 
