@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+
 from .models import Client
 
 User = get_user_model()
@@ -66,6 +67,24 @@ class CreateClientForm(forms.ModelForm):
         fields = ('name', 'surname', 'country', 'login_of', 'password_of', 'of_email',
                   'of_password_email', 'paid_account', 'login_of_paid_account','password_of_paid_account',
                   'email_of_paid_account','password_of_email_paid_account','photo', 'telegram_photos_link')
+
+
+class SetOperator(forms.Form):
+
+    operator_list = ((operator.pk, operator.username) for operator in User.objects.filter(groups__name='Operator'))
+
+    valuable_operators = forms.ChoiceField(choices=operator_list, label="Выберите оператора")
+
+
+class SetPromotion(forms.Form):
+
+    promotion_list = ((promo.pk, promo.username) for promo in User.objects.filter(groups__name='Рекламщики'))
+
+    valuable_promo = forms.ChoiceField(choices=promotion_list, label="Выберите рекламщика")
+
+
+
+
 
 
 

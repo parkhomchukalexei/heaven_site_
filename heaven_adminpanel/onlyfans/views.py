@@ -52,10 +52,6 @@ class OnlyFansWorkpage(LoginRequiredMixin,PermissionRequiredMixin,View):
             return render(request, self.template, context)
 
 
-        #print(get_by_operator_id_and_month(1,"07"))
-
-
-
 
     def post(self,request):
         data = request.POST
@@ -72,7 +68,6 @@ class OnlyFansWorkpage(LoginRequiredMixin,PermissionRequiredMixin,View):
         new_data.save()
 
         return redirect('onlyfans_workpage')
-
 
 
 class CreateNewTable(LoginRequiredMixin,PermissionRequiredMixin,View):

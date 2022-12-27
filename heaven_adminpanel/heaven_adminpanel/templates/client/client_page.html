@@ -88,6 +88,28 @@
   </div>
 </div>
 
+    <div>
+
+  <form action='./client_list.html' method="POST" class="post-form">
+        {% csrf_token %}
+        {{ operator.as_p }}
+        <button type="submit" class="btn btn-primary">Submit</button>
 </form>
+
+
+<form method="POST" class="post-form">
+        {% csrf_token %}
+        {{ promo }}
+        <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+
+
+</div>
+
+</form>
+
+
+
 
 {% endblock %}

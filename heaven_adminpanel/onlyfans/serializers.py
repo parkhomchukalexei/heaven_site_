@@ -14,10 +14,6 @@ class DataSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-
-
-
-
 class TableSerializer(serializers.ModelSerializer):
 
     client_surname = serializers.PrimaryKeyRelatedField(read_only=True, source= "client.surname")

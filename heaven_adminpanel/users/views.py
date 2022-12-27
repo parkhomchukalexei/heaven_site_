@@ -1,8 +1,10 @@
+import json
+
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, HttpResponse, redirect
-from .forms import CreateClientForm
+from .forms import CreateClientForm, SetOperator, SetPromotion
 
 # Create your views here.
 from django.views import View
@@ -10,7 +12,8 @@ from users.forms import UserCreationForm
 from users.models import Client
 from rest_framework.views import APIView, Response
 from rest_framework import viewsets
-from users.serializers import ClientSerializer
+from users.serializers import ClientSerializer, PermissionSerializer
+
 
 
 class Register(View):
@@ -84,8 +87,26 @@ class ClientPage(LoginRequiredMixin,View):
 
     def get(self, request, client_id):
         client = Client.objects.filter(id=client_id)
-        context = {'form': client[0]}
+        operator_list = SetOperator()
+        promotion_list = SetPromotion()
+        context = {'form': client[0],
+                   'operator': operator_list,
+                   'promo': promotion_list
+                   }
         return render(request, self.template_name, context)
+
+    def post(self, request):
+
+        client = Client.objects.filter(pk=self.request.user.pk)
+        print(client)
+        form = request.POST
+        print(form)
+
+        #if form == SetOperator and form.is_valid:
+        #    add_new_manager = Client(
+        #        client = client,
+        #        managers = form['']
+        #    )
 
 
 class DeleteClient(LoginRequiredMixin,View):
@@ -96,8 +117,15 @@ class DeleteClient(LoginRequiredMixin,View):
         return redirect('client_list')
 
 
+class PermissionList(APIView):
 
-
+    def get(self,request):
+        user = self.request.user
+        serializer = PermissionSerializer(data= {
+            "id": user.pk, "first_name": user.username, "user_permissions": user.user_permissions})
+        if serializer.is_valid():
+            return Response({"permission_list": serializer.validated_data})
+        else: print(serializer.errors)
 
 
 
