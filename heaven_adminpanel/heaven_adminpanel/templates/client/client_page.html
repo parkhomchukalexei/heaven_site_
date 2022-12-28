@@ -2,6 +2,8 @@
 
 {% block content %}
 
+<p name="client_id" type="hidden">{{form.pk}}</p>
+
 <form method="GET" class="get-form">
 
 <div class="card mb-3" style="max-width: 1280px;">
@@ -89,27 +91,25 @@
 </div>
 
     <div>
-
-  <form action='./client_list.html' method="POST" class="post-form">
-        {% csrf_token %}
+        <form>
         {{ operator.as_p }}
-        <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+        <input type="button"  onclick="set_operator()" name="set_operator_button" class="btn btn-primary">Submit</input>
+        </form>
 
 
-<form method="POST" class="post-form">
-        {% csrf_token %}
         {{ promo }}
-        <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+        <button type="submit" class="btn btn-primary" name="set_promo_manager_button">Submit</button>
 
+        {{ project }}
+        <button  class="btn btn-primary" name="set_project_manager_button">Submit</button>
 
 
 </div>
 
 </form>
 
-
-
-
+<script src="/static/client_page/client_page.js"></script>
+<script>
+    var mytoken = "{{ csrf_token }}";
+</script>
 {% endblock %}

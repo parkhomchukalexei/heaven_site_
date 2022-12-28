@@ -168,7 +168,6 @@ def find():
     return json.dumps(final_data)
 
 
-
 class TableDataSet(viewsets.ModelViewSet):
     queryset = TableData.objects.all()
     serializer_class = DataSerializer
@@ -183,7 +182,6 @@ class TableDataSet(viewsets.ModelViewSet):
             serializer.save()
             return HttpResponseRedirect(redirect_to='http://127.0.0.1:8000/onlyfans/')
         else: print(f"{serializer.errors}")
-
 
     def partial_update(self, request, pk=None, *args, **kwargs):
 

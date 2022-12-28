@@ -83,6 +83,12 @@ class SetPromotion(forms.Form):
     valuable_promo = forms.ChoiceField(choices=promotion_list, label="Выберите рекламщика")
 
 
+class SetProjectManager(forms.Form):
+
+    project_manager_list = ((project.pk, project.username) for project
+                            in User.objects.filter(groups__name="Project manager"))
+
+    valuable_project_manager = forms.ChoiceField(choices=project_manager_list, label="Выберите проект менеджера")
 
 
 

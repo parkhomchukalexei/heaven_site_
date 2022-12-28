@@ -4,7 +4,9 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, HttpResponse, redirect
-from .forms import CreateClientForm, SetOperator, SetPromotion
+from rest_framework.decorators import action
+
+from .forms import CreateClientForm, SetOperator, SetPromotion, SetProjectManager
 
 # Create your views here.
 from django.views import View
@@ -53,6 +55,8 @@ class CreateClient(LoginRequiredMixin,View):
 
 class ClientAPI(viewsets.ModelViewSet):
 
+    serializer_class = ClientSerializer
+
     def create(self, request, *args, **kwargs):
         client_data = {'name' : request.data['name'], 'surname': request.data['lastname'],
                        'login_of': request.data['onlyfanslogin'], 'password_of': request.data['onlyfanspassword'],
@@ -61,13 +65,31 @@ class ClientAPI(viewsets.ModelViewSet):
                        'password_of_paid_account': request.data['onlyfanspayedpassword'],
                        'email_of_paid_account': request.data['onlyfanspayedloginemail'],
                        'password_of_email_paid_account': request.data['onlyfanspayedpasswordemail'],
-                       'photo': request.data['photo'], 'telegram_photos_link': request.data['telegram']}
+                       'photo': request.data['photo'], 'telegram_photos_link': request.data['telegram'],
+                       'managers': self.request.user.pk}
 
         serializer = ClientSerializer(data=client_data)
         if serializer.is_valid():
             serializer.save()
             return HttpResponseRedirect(redirect_to='../../users/client_list/')
         else: print(f'{serializer.errors}')
+
+    @action(methods=['PATCH'], detail=True)
+    def set_operator(self, request, pk, *args, **kwargs):
+        #current_client = Client.objects.filter(pk = pk)
+        #managers_id = current_client.manager
+        print("YA TUT")
+        print(request)
+        return print('hui')
+
+    @action(methods=['PATCH'], detail=True)
+    def set_project_manager(self,request, *args, **kwargs):
+        pass
+
+    @action(methods=['PATCH'], detail=True)
+    def set_promo_manager(self, request, *args, **kwargs):
+        pass
+
 
 
 
@@ -89,24 +111,14 @@ class ClientPage(LoginRequiredMixin,View):
         client = Client.objects.filter(id=client_id)
         operator_list = SetOperator()
         promotion_list = SetPromotion()
+        project_list = SetProjectManager()
         context = {'form': client[0],
                    'operator': operator_list,
-                   'promo': promotion_list
+                   'promo': promotion_list,
+                   'project': project_list
                    }
         return render(request, self.template_name, context)
 
-    def post(self, request):
-
-        client = Client.objects.filter(pk=self.request.user.pk)
-        print(client)
-        form = request.POST
-        print(form)
-
-        #if form == SetOperator and form.is_valid:
-        #    add_new_manager = Client(
-        #        client = client,
-        #        managers = form['']
-        #    )
 
 
 class DeleteClient(LoginRequiredMixin,View):
