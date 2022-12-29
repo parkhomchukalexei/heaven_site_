@@ -14,6 +14,39 @@
     <div class="col-md-8">
       <div class="card-body">
         <h2 class="card-title">{{form.name}} {{form.surname}}</h2>
+
+
+        <div class="row">
+
+          <div class="col-md-3">
+        <ul class="list-group">
+             <li class="list-group-item active" aria-current="true">Закрепленные операторы</li>
+          {% for i in current_operators %}
+          <li class="list-group-item">{{ i }}</li>
+              {% endfor %}
+              </ul>
+            </div>
+
+          <div class="col-md-3">
+        <ul class="list-group">
+             <li class="list-group-item active" aria-current="true">Закрепленные рекламщики</li>
+          {% for i in current_promotions %}
+          <li class="list-group-item">{{ i }}</li>
+              {% endfor %}
+              </ul>
+            </div>
+
+          <div class="col-md-3">
+        <ul class="list-group">
+             <li class="list-group-item active" aria-current="true">Закрепленные Проэкт менеджеры</li>
+          {% for i in current_project %}
+          <li class="list-group-item">{{ i }}</li>
+              {% endfor %}
+              </ul>
+            </div>
+        </div>
+
+
         <div class="row">
           <div class="col-md-3">
           <label  for="onlyfanslogin">
@@ -90,18 +123,29 @@
   </div>
 </div>
 
-    <div>
-        <form>
+    <div class="row">
+
+      <div class="row">
+      </div>
+      <div class="col">
+        <form class="form-select" size="3" aria-label="size 3 select example">
         {{ operator.as_p }}
-        <input type="button"  onclick="set_operator()" name="set_operator_button" class="btn btn-primary">Submit</input>
+        <input type="button"  onclick="set_operator()" name="set_operator_button" class="btn btn-primary" value="Submit">
         </form>
+      </div>
 
-
+      <div class="col">
         {{ promo }}
-        <button type="submit" class="btn btn-primary" name="set_promo_manager_button">Submit</button>
-
+        <input type="button"  onclick="set_promo()" name="set_promo_button" class="btn btn-primary" value="Submit">
+      </div>
+      {% if user.is_superuser %}
+      <div class="col">
         {{ project }}
-        <button  class="btn btn-primary" name="set_project_manager_button">Submit</button>
+        <input type="button"  onclick="set_project_manager()" name="set_project_button" class="btn btn-primary" value="Submit">
+      </div>
+      {% endif %}
+
+
 
 
 </div>

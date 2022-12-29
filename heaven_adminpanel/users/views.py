@@ -11,7 +11,7 @@ from .forms import CreateClientForm, SetOperator, SetPromotion, SetProjectManage
 # Create your views here.
 from django.views import View
 from users.forms import UserCreationForm
-from users.models import Client
+from users.models import Client, User
 from rest_framework.views import APIView, Response
 from rest_framework import viewsets
 from users.serializers import ClientSerializer, PermissionSerializer
@@ -75,20 +75,12 @@ class ClientAPI(viewsets.ModelViewSet):
         else: print(f'{serializer.errors}')
 
     @action(methods=['PATCH'], detail=True)
-    def set_operator(self, request, pk, *args, **kwargs):
-        #current_client = Client.objects.filter(pk = pk)
-        #managers_id = current_client.manager
-        print("YA TUT")
-        print(request)
-        return print('hui')
+    def set_manager(self, request, pk, *args, **kwargs):
+        current_client = Client.objects.filter(pk = pk).first()
+        user_to_add = User.objects.filter(pk= request.data['data']).first()
+        current_client.managers.add(user_to_add)
+        return Response({'vse zbs': "vse ok"})
 
-    @action(methods=['PATCH'], detail=True)
-    def set_project_manager(self,request, *args, **kwargs):
-        pass
-
-    @action(methods=['PATCH'], detail=True)
-    def set_promo_manager(self, request, *args, **kwargs):
-        pass
 
 
 
@@ -112,10 +104,19 @@ class ClientPage(LoginRequiredMixin,View):
         operator_list = SetOperator()
         promotion_list = SetPromotion()
         project_list = SetProjectManager()
+
+        current_operators = Client.objects.get(id=client_id).managers.all().filter(groups__name = "Operator")
+        current_promotions = Client.objects.get(id=client_id).managers.all().filter(groups__name = "Рекламщики")
+        current_project = Client.objects.get(id=client_id).managers.all().filter(groups__name = "Project manager")
+
+
         context = {'form': client[0],
                    'operator': operator_list,
                    'promo': promotion_list,
-                   'project': project_list
+                   'project': project_list,
+                   'current_operators': current_operators,
+                   'current_promotions': current_promotions,
+                   'current_project': current_project,
                    }
         return render(request, self.template_name, context)
 
