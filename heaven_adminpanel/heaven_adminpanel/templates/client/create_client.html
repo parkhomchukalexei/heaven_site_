@@ -202,7 +202,14 @@
                     'photo': document.getElementById('photo').value,
 
             }),
-        })
+        }).then(
+                function(response){
+                if(!response.ok){
+                console.log(response.statusText)
+                        
+                }
+                }
+                )
         }
 
 

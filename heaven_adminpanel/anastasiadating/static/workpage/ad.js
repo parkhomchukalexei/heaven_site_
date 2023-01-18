@@ -1,4 +1,4 @@
-console.log('hui')
+console.log('privet')
 var a = document.getElementsByClassName("day_of_month")
     var tables = document.getElementsByClassName('table table-bordered')
     for (i = 0; i < tables.length; i++) {

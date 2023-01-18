@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'users',
     'onlyfans',
     'debug_toolbar',
+    'anastasiadating',
 
 ]
 
@@ -86,10 +87,10 @@ WSGI_APPLICATION = 'heaven_adminpanel.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'heaven',
+        'NAME': 'heaven_database',
         'USER': 'root',
-        'PASSWORD': 'admin',
-        'PORT': '3306',
+        'PASSWORD': 'heaven123',
+        'PORT': '3310',
         'HOST': 'localhost',
     }
 }

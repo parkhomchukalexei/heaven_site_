@@ -66,12 +66,13 @@ class ClientAPI(viewsets.ModelViewSet):
                        'email_of_paid_account': request.data['onlyfanspayedloginemail'],
                        'password_of_email_paid_account': request.data['onlyfanspayedpasswordemail'],
                        'photo': request.data['photo'], 'telegram_photos_link': request.data['telegram'],
-                       'managers': self.request.user.pk}
+                       'managers': list([User.objects.filter(pk= self.request.user.pk).first().pk])}
 
         serializer = ClientSerializer(data=client_data)
         if serializer.is_valid():
             serializer.save()
-            return HttpResponseRedirect(redirect_to='../../users/client_list/')
+            return Response({'vse ok': "vse ok"})
+
         else: print(f'{serializer.errors}')
 
     @action(methods=['PATCH'], detail=True)
@@ -90,7 +91,11 @@ class ClientList(LoginRequiredMixin,View):
     template_name = 'client/client_list.html'
 
     def get(self, request):
-        client_list = Client.objects.all()
+        user = self.request.user
+        if user.is_superuser:
+            client_list = Client.objects.all()
+        else:
+            client_list = Client.objects.all().filter(managers= user.pk)
         context = {'form': client_list}
         return render(request, self.template_name, context)
 

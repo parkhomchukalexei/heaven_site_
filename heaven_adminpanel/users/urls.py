@@ -16,4 +16,5 @@ urlpatterns = [
     path('delete_client/<int:client_id>', DeleteClient.as_view(), name='delete_client'),
     path('', include(router.urls)),
     path('permissions/', PermissionList.as_view(), name='permission_list')
+
 ]

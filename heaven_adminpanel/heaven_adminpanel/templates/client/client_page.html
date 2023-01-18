@@ -123,6 +123,7 @@
   </div>
 </div>
 
+    {% if perms.auth.change_permission %}
     <div class="row">
 
       <div class="row">
@@ -145,15 +146,20 @@
       </div>
       {% endif %}
 
+      {% endif %}
 
 
 
 </div>
 
 </form>
-
+<script>
+    var perms = "{{ perms.assets }}";
+    console.log(perms)
+</script>
 <script src="/static/client_page/client_page.js"></script>
 <script>
     var mytoken = "{{ csrf_token }}";
 </script>
+
 {% endblock %}

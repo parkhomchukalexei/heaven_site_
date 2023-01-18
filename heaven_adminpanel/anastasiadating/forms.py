@@ -1,14 +1,14 @@
-from django.forms import ModelForm, ChoiceField, Form
+from django.forms import ModelForm, ChoiceField, Form, CharField
 from users.models import User, Client
 
 
-class CreateOnlyfansTable(Form):
+class CreateAnastasiadatingTable(Form):
 
-    all_operators = User.objects.filter(groups__name = 'Operator')
     all_clients = Client.objects.all()
-    page_choice = (
-        ('0', 'OP'),
-        ('1', 'FP+PP')
+    all_operators = User.objects.filter(groups__name = 'Operator')
+    table_choise = (
+        ('1', 'AD'),
+        ('0', 'S')
     )
     users_choise = (
         ((i.id, i) for i in all_operators)
@@ -22,7 +22,5 @@ class CreateOnlyfansTable(Form):
     month = ChoiceField(choices=month_list)
     operator = ChoiceField(choices=users_choise)
     client = ChoiceField(choices=client_choise)
-    table_type = ChoiceField(choices=page_choice)
-
-
-
+    table_type = ChoiceField(choices=table_choise)
+    account_id = CharField()

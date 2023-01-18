@@ -23,4 +23,5 @@ urlpatterns = [
     path('users/', include('users.urls')),
     path('onlyfans/', include('onlyfans.urls')),
     path('__debug__/', include('debug_toolbar.urls')),
+    path('anastasiadating/', include('anastasiadating.urls'))
 ]
