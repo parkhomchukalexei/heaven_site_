@@ -8,7 +8,7 @@ document.getElementsByName('valuable_project_manager')[0].setAttribute('class', 
 function set_operator(){
     const new_operator_id = document.getElementsByName('valuable_operators')[0].value
     const client_id =  document.getElementsByName('client_id')[0].innerText
-    fetch(`../client_api/${client_id}/set_manager/`, {
+    fetch(`../client_api/${client_id}/set_manager/`,  {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',

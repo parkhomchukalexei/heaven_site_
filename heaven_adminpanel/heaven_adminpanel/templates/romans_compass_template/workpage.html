@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+
+{% if perms.onlyfans_table.can_add %}
+<a class="btn btn-success" href="{%  url 'jump_for_love_table'  %}" role="button">Create Table</a>
+{% endif %}
+<p> {% csrf_token %}</p>
+
+{% for table in form %}
+<div>
+<table class="table table-bordered">
+    <thead>
+    <th>Clients</th>
+    <th width="2%">ID</th>
+    {% for i in month %}
+    <th>{{i}}</th>
+    {% endfor %}
+    </thead>
+    <tfoot>
+    <th>Sum</th>
+    <th></th>
+    {% for i in month %}
+    <th id={{i}} width="2%"></th>
+    {% endfor %}
+    </tfoot>
+
+    {% for client_table in table.values %}
+    {% if client_table.table.table_info.table_type == True %}
+    <tbody name={{client_table.table.table_info.operator_name}} {{client_table.table.table_info.operator_surname}} id={{client_table.table.table_info.id}}>
+    <tr>
+        <th rowspan="2">{{client_table.table.table_info.client_name}} {{client_table.table.table_info.client_surname}}
+        </th>
+        <td class="table_type">{{client_table.table.table_info.account_id}}</td>
+        {% for i in month %}
+        <td width="3%" class="day_of_month" onmouseover="this.style.backgroundColor='#FDF5E6'"
+            onmouseout="this.style.backgroundColor='#ffffff'">
+            {% for info in client_table.table.table_data %}
+            {% if info.day == i %}
+            <p id={{info.id}}>{{info.data}}$</p>
+            {% endif %}
+            {% endfor %}
+        </td>
+        {% endfor %}
+    </tr>
+    </tbody>
+
+    {% endfor %}
+    </table>
+     </div>
+    {% endfor %}
+
+<script>
+    var perms = "{{ perms.assets }}";
+</script>
+<script src="/static/workpage/romans_compass.js">
+</script>
+<script>
+    var mytoken = "{{ csrf_token }}";
+</script>
+
+{% endblock %}
+
+

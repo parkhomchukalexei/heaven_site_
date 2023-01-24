@@ -2,14 +2,10 @@ from django.forms import ModelForm, ChoiceField, Form, CharField
 from users.models import User, Client
 
 
-class CreateAnastasiadatingTable(Form):
+class CreateGoldenBrideTable(Form):
 
     all_clients = Client.objects.all()
-    all_operators = User.objects.filter(groups__name = '[AD] Operator')
-    table_choise = (
-        ('1', 'AD'),
-        ('0', 'S')
-    )
+    all_operators = User.objects.filter(groups__name = 'Operator')
     users_choise = (
         ((i.id, i) for i in all_operators)
     )
@@ -22,5 +18,4 @@ class CreateAnastasiadatingTable(Form):
     month = ChoiceField(choices=month_list)
     operator = ChoiceField(choices=users_choise)
     client = ChoiceField(choices=client_choise)
-    table_type = ChoiceField(choices=table_choise)
     account_id = CharField()

@@ -11,10 +11,10 @@ User = get_user_model()
 '''
 class CustomUserCreationForm(UserCreationForm):
 
-    email = forms.EmailField(
+    email = forms.py.EmailField(
         label=_('Email'),
         max_length=254,
-        widget=forms.EmailInput(attrs={'autocomplete':'email'})
+        widget=forms.py.EmailInput(attrs={'autocomplete':'email'})
     )
 
     class Meta(UserCreationForm.Meta):

@@ -71,8 +71,7 @@ class ClientAPI(viewsets.ModelViewSet):
         serializer = ClientSerializer(data=client_data)
         if serializer.is_valid():
             serializer.save()
-            return Response({'vse ok': "vse ok"})
-
+            return HttpResponseRedirect('http://127.0.0.1:8000/users/client_list/')
         else: print(f'{serializer.errors}')
 
     @action(methods=['PATCH'], detail=True)

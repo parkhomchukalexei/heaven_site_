@@ -180,7 +180,7 @@
 
         function create_client(){
                 fetch(`/users/client_api/`, {
-            method: 'POST',
+            method: 'POST', redirect: "follow",
             headers: {
                     'X-CSRFToken': document.getElementsByName('csrfmiddlewaretoken')[0].value,
                 'Content-Type': 'application/json',
@@ -202,14 +202,7 @@
                     'photo': document.getElementById('photo').value,
 
             }),
-        }).then(
-                function(response){
-                if(!response.ok){
-                console.log(response.statusText)
-                        
-                }
-                }
-                )
+        })
         }
 
 
