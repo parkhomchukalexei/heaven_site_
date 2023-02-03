@@ -3,11 +3,55 @@
 {% block content %}
 {% load static %}
 
-{% if perms.onlyfans_table.can_add %}
+{% if perms.onlyfans.add_onlyfanstable %}
 <a class="btn btn-success" href="{%  url 'onlyfans_new_table'  %}" role="button">Create Table</a>
 {% endif %}
 <p> {% csrf_token %}</p>
 
+<div id="list-example" class="list-group">
+
+<ul class="nav nav-pills">
+    <li class="nav-item">
+      <a class="list-group-item list-group-item-action" href="?page=1">Январь</a>
+    </li>
+    <li class="nav-item">
+      <a class="list-group-item list-group-item-action" href="?page=2">Февраль</a>
+    </li>
+    <li class="nav-item">
+      <a class="list-group-item list-group-item-action" href="?page=3">Март</a>
+    </li>
+    <li class="nav-item">
+      <a class="list-group-item list-group-item-action" href="?page=4">Апрель</a>
+    </li>
+    <li class="nav-item">
+      <a class="list-group-item list-group-item-action" href="?page=5">Май</a>
+    </li>
+    <li class="nav-item">
+      <a class="list-group-item list-group-item-action" href="?page=6">Июнь</a>
+    </li>
+    <li class="nav-item">
+      <a class="list-group-item list-group-item-action" href="?page=7">Июль</a>
+    </li>
+    <li class="nav-item">
+      <a class="list-group-item list-group-item-action" href="?page=8">Август</a>
+    </li>
+    <li class="nav-item">
+      <a class="list-group-item list-group-item-action" href="?page=9">Сентябрь</a>
+    </li>
+    <li class="nav-item">
+      <a class="list-group-item list-group-item-action" href="?page=10">Октябрь</a>
+    </li>
+    <li class="nav-item">
+      <a class="list-group-item list-group-item-action" href="?page=11">Ноябрь</a>
+    </li>
+    <li class="nav-item">
+      <a class="list-group-item list-group-item-action" href="?page=12">Декабрь</a>
+    </li>
+</ul>
+    </div>
+
+
+{% for form in data %}
 {% for table in form %}
 <div>
 <table class="table table-bordered">
@@ -83,9 +127,11 @@
     </table>
      </div>
     {% endfor %}
+    {% endfor %}
 
 <script>
     var perms = "{{ perms.assets }}";
+    console.log(perms)
 </script>
 <script src="/static/workpage/workpage.js">
 </script>

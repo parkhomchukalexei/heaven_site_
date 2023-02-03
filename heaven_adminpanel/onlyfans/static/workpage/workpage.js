@@ -1,4 +1,3 @@
-console.log('hui')
 var a = document.getElementsByClassName("day_of_month")
     var tables = document.getElementsByClassName('table table-bordered')
     for (i = 0; i < tables.length; i++) {
@@ -67,7 +66,7 @@ var a = document.getElementsByClassName("day_of_month")
         const has_perm = has_perms()
         if (has_perm){
         a[i].addEventListener('dblclick', () => {
-            if (!a[i].innerText.trim()) {
+            if (!a[i].innerText.trim() && !a[i].getElementsByClassName('input')) {
                 a[i].innerHTML = cellForm("post", a[i], i, 31);
             } else {
                 const index = a[i].getElementsByTagName('p')[0].id;
