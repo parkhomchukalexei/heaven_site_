@@ -46,7 +46,7 @@ class OnlyFansWorkpage(LoginRequiredMixin,PermissionRequiredMixin,View,):
         return json.dumps(list(filter(None, final_data)))
 
     def days_in_month(self, month):
-        month_list = {'1': 31, '2': 29, '3': 31, '4': 30, '5': 31, '6': 30, '7': 31,
+        month_list = {'1': 31, '2': 28, '3': 31, '4': 30, '5': 31, '6': 30, '7': 31,
                       '8': 31, '9': 30, '10': 31, '11': 30, '12': 31}
 
         a = [str(i) for i in range(1, month_list[month] + 1)]
@@ -68,9 +68,11 @@ class OnlyFansWorkpage(LoginRequiredMixin,PermissionRequiredMixin,View,):
         return data
 
     def get(self, request):
-
         if 'Operator' in str(request.user.groups.all()):
-            pagination_page = request.GET.get('page')
+            if request.GET.get('page'):
+                pagination_page = request.GET.get('page')
+            else:
+                pagination_page = '1'
             table_list = self.create_pagination_object(user= User.objects.get(pk=request.user.pk))
             paginator = Paginator(table_list, 1)
             page_object = paginator.get_page(pagination_page)
@@ -78,7 +80,10 @@ class OnlyFansWorkpage(LoginRequiredMixin,PermissionRequiredMixin,View,):
                                                            'month': self.days_in_month(pagination_page)})
 
         else:
-            pagination_page = request.GET.get('page')
+            if request.GET.get('page'):
+                pagination_page = request.GET.get('page')
+            else:
+                pagination_page = '1'
             table_list = self.create_pagination_object(user=User.objects.get(pk=request.user.pk))
             paginator = Paginator(table_list, 1)
             page_object = paginator.get_page(pagination_page)

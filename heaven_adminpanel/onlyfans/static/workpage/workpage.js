@@ -1,4 +1,5 @@
 var a = document.getElementsByClassName("day_of_month")
+console.log(days_is_month)
     var tables = document.getElementsByClassName('table table-bordered')
     for (i = 0; i < tables.length; i++) {
         tables[i].setAttribute('id', i)
@@ -31,7 +32,7 @@ var a = document.getElementsByClassName("day_of_month")
 
     function sendPut(inputValue, index, inputId, CSRFtoken, dadElement) {
 
-        const dayOfMonth = (index + 1) % 31;
+        const dayOfMonth = (index + 1) % days_is_month;
 
         const table_id = dadElement.parentNode.parentElement.parentElement.id
         const day = dadElement.id
@@ -57,7 +58,7 @@ var a = document.getElementsByClassName("day_of_month")
         ).then(
             dadElement.innerHTML = `<p id="${inputId}">${inputValue}$</p>`,
         ).then(
-            write_sum_to_table(+table_id, +day % 31, 31),
+            write_sum_to_table(+table_id, +day % days_is_month, days_is_month),
         )
     }
 
@@ -66,8 +67,8 @@ var a = document.getElementsByClassName("day_of_month")
         const has_perm = has_perms()
         if (has_perm){
         a[i].addEventListener('dblclick', () => {
-            if (!a[i].innerText.trim() && !a[i].getElementsByClassName('input')) {
-                a[i].innerHTML = cellForm("post", a[i], i, 31);
+            if (!Boolean(a[i].innerText.trim()) && (a[i].children.length === 0)) {
+                a[i].innerHTML = cellForm("post", a[i], i, days_is_month);
             } else {
                 const index = a[i].getElementsByTagName('p')[0].id;
                 a[i].innerHTML = putInput(a[i], index);
@@ -93,7 +94,7 @@ var a = document.getElementsByClassName("day_of_month")
             const b = a.getElementsByTagName('th')
             for (let c of b){
                 if (c.id){
-                    write_sum_to_table(+i, +c.id, 31)
+                    write_sum_to_table(+i, +c.id, days_is_month)
                 }
 
             }
@@ -107,7 +108,8 @@ var a = document.getElementsByClassName("day_of_month")
         let last_sum = 0;
         const table = document.querySelectorAll("table.table-bordered")[table_id];
         const sumCell = table.getElementsByTagName('tfoot')[0].getElementsByTagName('th')[day + thWithoutId];
-        const lastCell = table.getElementsByTagName('tfoot')[0].getElementsByTagName('th')[32]; ///tyt nado menyat cufryposlednego dnya
+        console.log(days_is_month +1)
+        const lastCell = table.getElementsByTagName('tfoot')[0].getElementsByTagName('th')[days_is_month + 1];
         const cells = table.getElementsByClassName("day_of_month");
         for (let i of cells) {
             if (i.id % daysInMonth === 0) {
@@ -133,5 +135,23 @@ var a = document.getElementsByClassName("day_of_month")
             }
         }}
 
+    function daily_sum(day){
+
+        let sum = 0
+        console.log(table_list.length)
+                for (let i = 0; i < table_list.length; i++) {
+                    console.log(sum)
+                    sum += parseFloat(document.getElementsByClassName('table table-bordered')[i].getElementsByTagName('tfoot')[0].getElementsByTagName('tr')[0].getElementsByTagName('th')[day + 1].getElementsByTagName('p')[0].innerHTML.slice(0, -1))
+                }
+                return sum
+        }
 
 
+    function paste_daily_sum(DaysOfMonth){
+        for (i = 0; i < DaysOfMonth; i++){
+            document.getElementsByClassName('day_sum')[i].innerHTML += daily_sum(i +1)+'$'
+        }
+
+    }
+
+    paste_daily_sum(days_is_month)

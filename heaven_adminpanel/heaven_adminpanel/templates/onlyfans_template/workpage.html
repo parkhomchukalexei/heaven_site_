@@ -50,11 +50,28 @@
 </ul>
     </div>
 
+<div>
+
+    <table class="table table-responsive ">
+    <thead>
+    <th class="border border-success">Day</th>
+    {% for i in month %}
+    <th class="border border-success">{{i}}</th>
+    {% endfor %}
+    </thead>
+    <tfoot>
+    <th class="border border-success">Sum</th>
+    {% for i in month %}
+    <th class="day_sum border border-success" id={{i}} width="2%"></th>
+    {% endfor %}
+    </tfoot>
+    </table>
+</div>
 
 {% for form in data %}
 {% for table in form %}
 <div>
-<table class="table table-bordered">
+<table class="table table-bordered table-responsive">
     <thead>
     <th>Clients</th>
     <th width="2%"></th>
@@ -131,7 +148,8 @@
 
 <script>
     var perms = "{{ perms.assets }}";
-    console.log(perms)
+    var days_is_month = parseInt("{{ month|last }}")
+
 </script>
 <script src="/static/workpage/workpage.js">
 </script>
