@@ -1,12 +1,11 @@
 
 from django.urls import path, include
 
-from charm_date.views import CharmDateWorkpage, CreateNewTable,TableDataSet, TableViewSet
+from charm_date.views import CharmDateWorkpage, CreateNewTable, TableDataSet
 from rest_framework import routers
 
 router = routers.SimpleRouter()
 router.register(r'table_data', TableDataSet)
-router.register(r'table', TableViewSet, basename='table')
 
 
 urlpatterns = [

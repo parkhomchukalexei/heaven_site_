@@ -11,23 +11,21 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from charm_date.models import CharmDateTable, TableData
-from charm_date.serializers import TableSerializer, DataSerializer
+from romans_compass.models import RomansCompassTable,TableData
+from romans_compass.serializers import TableSerializer, DataSerializer
 from users.models import Client, User
-from charm_date.forms import CreateCharmDateTable
+from romans_compass.forms import CreateRomansCompassTable
 from onlyfans.views import ViewData
 
 # Create your views here.
 
 
-class CharmDateWorkpage(LoginRequiredMixin,View):
-
-    permission_required = 'charm_date.view_charmdatetable'
-    template = 'charm_date_template/workpage.html'
+class RomansCompassWorkpage(LoginRequiredMixin, View):
+    permission_required = 'romans_compass.view_romanscompasstable'
+    template = 'romans_compass_template/workpage.html'
 
     def __init__(self):
-        self.data = ViewData(table_object=CharmDateTable, table_serializer=TableSerializer,
-                             table_data_object=TableData,
+        self.data = ViewData(table_object=RomansCompassTable, table_serializer=TableSerializer, table_data_object=TableData,
                              data_serializer=DataSerializer)
 
     def create_pagination_object(self, user):
@@ -38,7 +36,7 @@ class CharmDateWorkpage(LoginRequiredMixin,View):
                 month = '0' + str(i)
             else:
                 month = str(i)
-            if '[CharmDate] Operator' in str(user.groups.all()):
+            if '[RomansCompass] Operator' in str(user.groups.all()):
                 data.append(
                     self.data.get_by_operator_id_and_month(pk=user.pk, month=month))
             else:
@@ -46,7 +44,7 @@ class CharmDateWorkpage(LoginRequiredMixin,View):
         return data
 
     def get(self, request):
-        if '[CharmDate] Operator' in str(request.user.groups.all()):
+        if '[RomansCompass] Operator' in str(request.user.groups.all()):
             if request.GET.get('page'):
                 pagination_page = request.GET.get('page')
             else:
@@ -58,12 +56,12 @@ class CharmDateWorkpage(LoginRequiredMixin,View):
                                                            'month': self.data.days_in_month(pagination_page)})
 
         else:
-
             if request.GET.get('page'):
                 pagination_page = request.GET.get('page')
             else:
                 pagination_page = '1'
             table_list = self.create_pagination_object(user=User.objects.get(pk=request.user.pk))
+
             paginator = Paginator(table_list, 1)
             page_object = paginator.get_page(pagination_page)
             return render(request, self.template, context={'data': page_object,
@@ -71,31 +69,30 @@ class CharmDateWorkpage(LoginRequiredMixin,View):
 
 
 class CreateNewTable(LoginRequiredMixin, View):
-    permission_required = 'charm_date.add_charmdatetable'
-    template = 'charm_date_template/create_table.html'
+    permission_required = 'romans_compass.add_romanscompasstable'
+    template = 'romans_compass_template/create_table.html'
 
     def get(self, request):
         context = {
-            'form': CreateCharmDateTable,
+            'form': CreateRomansCompassTable,
         }
-        return render(request,self.template, context)
+        return render(request, self.template, context)
 
     def post(self, request):
+        form = CreateRomansCompassTable(request.POST)
 
-        form = CreateCharmDateTable(request.POST)
-
-        month = date(month = int(request.POST['month']), day=1, year= 2023)
+        month = date(month=int(request.POST['month']), day=1, year=2023)
         account_id = request.POST['account_id']
 
         if form.is_valid:
-                new_table = CharmDateTable(
+
+                new_table = RomansCompassTable(
                     date=month,
                     client=Client.objects.filter(id=int(request.POST['client']))[0],
                     operator=User.objects.filter(id=int(request.POST['operator']))[0],
-                    account_id = account_id,
-                )
+                    account_id=account_id)
                 new_table.save()
-        return redirect('charm_date_workpage')
+        return redirect('romans_compass_workpage')
 
 
 class TableDataSet(viewsets.ModelViewSet):
@@ -103,18 +100,21 @@ class TableDataSet(viewsets.ModelViewSet):
     serializer_class = DataSerializer
 
     def create(self, request, *args, **kwargs):
+
         if 'page ' in request.META.get('HTTP_REFERER'):
             url = request.META.get('HTTP_REFERER')[int(request.META.get('HTTP_REFERER').find("=")) + 1::]
         else:
             url = '1'
-        table_data = {"data": request.data['data'],"data_type":str(request.data['data_type']), "table": int(request.data['table']),
-                      "date": date(month = int(url), day= int(request.data['date']), year= 2022)}
+        table_data = {"data": request.data['data'], "data_type": str(request.data['data_type']),
+                      "table": int(request.data['table']),
+                      "date": date(month=int(url), day=int(request.data['date']), year=2022)}
 
         serializer = DataSerializer(data=table_data)
         if serializer.is_valid():
             serializer.save()
-            return HttpResponseRedirect(redirect_to=f'http://127.0.0.1:8000/charm-date/?page={url}')
-        else: print(f"{serializer.errors}")
+            return HttpResponseRedirect(redirect_to=f'http://127.0.0.1:8000/romans_compass/?page={url}')
+        else:
+            print(f"{serializer.errors}")
 
     def partial_update(self, request, pk=None, *args, **kwargs):
 
@@ -124,9 +124,9 @@ class TableDataSet(viewsets.ModelViewSet):
         td_object = get_object(pk=pk)
 
         serializer = DataSerializer(td_object, data={'data': request.data['data'], 'date': td_object.date,
-                                                      'table': int(td_object.table.pk) })
+                                                     'table': int(td_object.table.pk)})
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            return Response({'status':'done'})
+            return Response({'status': 'done'})
         else:
             return Response(serializer.errors)

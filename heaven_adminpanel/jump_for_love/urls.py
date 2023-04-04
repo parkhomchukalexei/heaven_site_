@@ -1,12 +1,11 @@
 
 from django.urls import path, include
 
-from jump_for_love.views import JumpForLoveWorkpage, CreateNewTable, TableDataSet, TableViewSet
+from jump_for_love.views import JumpForLoveWorkpage, CreateNewTable, TableDataSet
 from rest_framework import routers
 
 router = routers.SimpleRouter()
 router.register(r'table_data', TableDataSet)
-router.register(r'table', TableViewSet, basename='table')
 
 
 urlpatterns = [

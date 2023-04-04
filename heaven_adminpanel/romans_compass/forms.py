@@ -1,16 +1,11 @@
-from django.forms import ModelForm, ChoiceField, Form, CharField
+from django.forms import ChoiceField, Form, CharField
 from users.models import User, Client
 
 
-class CreateAnastasiadatingTable(Form):
+class CreateRomansCompassTable(Form):
 
     all_clients = Client.objects.all()
-    all_operators = User.objects.filter(groups__name = '[AD] Operator')
-    print(all_operators)
-    table_choise = (
-        ('1', 'AD'),
-        ('0', 'D')
-    )
+    all_operators = User.objects.filter(groups__name = 'Operator')
     operator_choise = (
         ((i.id, i) for i in all_operators)
     )
@@ -23,5 +18,4 @@ class CreateAnastasiadatingTable(Form):
     month = ChoiceField(choices=month_list)
     operator = ChoiceField(choices=operator_choise)
     client = ChoiceField(choices=client_choise)
-    table_type = ChoiceField(choices=table_choise)
     account_id = CharField()

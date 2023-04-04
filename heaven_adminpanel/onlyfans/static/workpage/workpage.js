@@ -1,5 +1,4 @@
 var a = document.getElementsByClassName("day_of_month")
-console.log(days_is_month)
     var tables = document.getElementsByClassName('table table-bordered')
     for (i = 0; i < tables.length; i++) {
         tables[i].setAttribute('id', i)
@@ -108,7 +107,6 @@ console.log(days_is_month)
         let last_sum = 0;
         const table = document.querySelectorAll("table.table-bordered")[table_id];
         const sumCell = table.getElementsByTagName('tfoot')[0].getElementsByTagName('th')[day + thWithoutId];
-        console.log(days_is_month +1)
         const lastCell = table.getElementsByTagName('tfoot')[0].getElementsByTagName('th')[days_is_month + 1];
         const cells = table.getElementsByClassName("day_of_month");
         for (let i of cells) {
@@ -138,7 +136,6 @@ console.log(days_is_month)
     function daily_sum(day){
 
         let sum = 0
-        console.log(table_list.length)
                 for (let i = 0; i < table_list.length; i++) {
                     console.log(sum)
                     sum += parseFloat(document.getElementsByClassName('table table-bordered')[i].getElementsByTagName('tfoot')[0].getElementsByTagName('tr')[0].getElementsByTagName('th')[day + 1].getElementsByTagName('p')[0].innerHTML.slice(0, -1))

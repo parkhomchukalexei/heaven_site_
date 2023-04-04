@@ -1,4 +1,4 @@
-from django.forms import ModelForm, ChoiceField, Form, CharField
+from django.forms import ChoiceField, Form, CharField
 from users.models import User, Client
 
 
@@ -9,10 +9,6 @@ class CreateJumpForLoveTable(Form):
     users_choise = (
         ((i.id, i) for i in all_operators)
     )
-    page_choice = (
-        ('0', 'Jump For Love'),
-        ('1', 'Romans Compass')
-    )
     client_choise = (
         ((i.id, i.name) for i in all_clients)
     )
@@ -21,6 +17,5 @@ class CreateJumpForLoveTable(Form):
 
     month = ChoiceField(choices=month_list)
     operator = ChoiceField(choices=users_choise)
-    table_type = ChoiceField(choices=page_choice)
     client = ChoiceField(choices=client_choise)
     account_id = CharField()

@@ -7,7 +7,7 @@ from rest_framework.decorators import action
 from .models import OnlyFansTable,TableData
 from .forms import CreateOnlyfansTable
 from users.models import Client,User
-from time import strftime, struct_time
+from users.models import Client,User
 from datetime import datetime, date
 from rest_framework.views import APIView, Response
 from rest_framework import viewsets
@@ -16,12 +16,42 @@ from django.core.paginator import Paginator
 import json
 
 
-class OnlyFansWorkpage(LoginRequiredMixin,PermissionRequiredMixin,View,):
-    permission_required = 'onlyfans.view_onlyfanstable'
-    template = 'onlyfans_template/workpage.html'
+class ViewData:
+
+    def __init__(self, table_object, table_serializer, data_serializer, table_data_object):
+        self.table_object = table_object
+        self.table_data_object = table_data_object
+        self.table_serializer = table_serializer
+        self.data_serializer = data_serializer
+    def get_id_list(self):
+
+        data = (int(i.operator.pk) for i in self.table_object.objects.all())
+        return tuple(set(data))
+
+    def make_get(self):
+
+        data = {f'table_{a.id}': {'table':
+                                      {'table_info': self.table_serializer(a).data,
+                                       f'table_data': self.data_serializer(self.table_data_object.objects.filter(table_id=int(a.id)),
+                                                                     many=True).data}
+                                  }
+                for a in
+                self.table_object.objects.prefetch_related('tabledata_set').all()}
+
+        return data
+
+    def find(self):
+
+        data = self.make_get()
+        id_list = self.get_id_list()
+        final_data = []
+        for i in id_list:
+            final_data.append(
+                {key: value for key, value in data.items() if value['table']['table_info']['operator'] == i})
+        return json.dumps(final_data)
 
     def get_by_operator_id_and_month(self, pk, month):
-        data = json.loads(find())
+        data = json.loads(self.find())
         final_data = []
         for i in data:
             final_data.append(
@@ -29,21 +59,14 @@ class OnlyFansWorkpage(LoginRequiredMixin,PermissionRequiredMixin,View,):
                  and value['table']['table_info']['date'][5:7] == month})
         return list(filter(None, final_data))
 
+
     def get_by_month(self, month):
-        data = json.loads(find())
+        data = json.loads(self.find())
         final_data = []
         for i in data:
             final_data.append(
                 {key: value for key, value in i.items() if value['table']['table_info']['date'][5:7] == month})
         return list(filter(None, final_data))
-
-    def get_by_operator_id(self, pk):
-        data = json.loads(find())
-        final_data = []
-        for i in data:
-            final_data.append(
-                {key: value for key, value in i.items() if value['table']['table_info']['operator'] == int(pk)})
-        return json.dumps(list(filter(None, final_data)))
 
     def days_in_month(self, month):
         month_list = {'1': 31, '2': 28, '3': 31, '4': 30, '5': 31, '6': 30, '7': 31,
@@ -51,6 +74,17 @@ class OnlyFansWorkpage(LoginRequiredMixin,PermissionRequiredMixin,View,):
 
         a = [str(i) for i in range(1, month_list[month] + 1)]
         return a
+
+
+
+
+class OnlyFansWorkpage(LoginRequiredMixin,PermissionRequiredMixin,View):
+    permission_required = 'onlyfans.view_onlyfanstable'
+    template = 'onlyfans_template/workpage.html'
+
+    def __init__(self):
+        self.data = ViewData(table_object=OnlyFansTable, table_data_object=TableData,table_serializer=TableSerializer,
+                             data_serializer=DataSerializer)
 
     def create_pagination_object(self, user):
 
@@ -62,9 +96,9 @@ class OnlyFansWorkpage(LoginRequiredMixin,PermissionRequiredMixin,View,):
                 month = str(i)
             if 'Operator' in str(user.groups.all()):
                 data.append(
-                    self.get_by_operator_id_and_month(pk=user.pk, month=month))
+                    self.data.get_by_operator_id_and_month(pk=user.pk, month=month))
             else:
-                data.append(self.get_by_month(month=month))
+                data.append(self.data.get_by_month(month=month))
         return data
 
     def get(self, request):
@@ -77,7 +111,7 @@ class OnlyFansWorkpage(LoginRequiredMixin,PermissionRequiredMixin,View,):
             paginator = Paginator(table_list, 1)
             page_object = paginator.get_page(pagination_page)
             return render(request, self.template, context={'data': page_object,
-                                                           'month': self.days_in_month(pagination_page)})
+                                                           'month': self.data.days_in_month(pagination_page)})
 
         else:
             if request.GET.get('page'):
@@ -88,25 +122,7 @@ class OnlyFansWorkpage(LoginRequiredMixin,PermissionRequiredMixin,View,):
             paginator = Paginator(table_list, 1)
             page_object = paginator.get_page(pagination_page)
             return render(request, self.template, context={'data': page_object,
-                                                           'month': self.days_in_month(pagination_page)})
-
-
-    def post(self,request):
-        print(request.POST)
-        data = request.POST
-        day = dict(data)['day'][0]
-        value = dict(data)['value'][0]
-        type = dict(data)['type'][0]
-        table_id = dict(data)['table_id'][0]
-        table = OnlyFansTable.objects.filter(id=int(table_id))
-        new_data = TableData(
-            data = float(value), data_type = type,
-            date = datetime(year=2022,month=8,day=int(day)),
-            table = table[0]
-        )
-        new_data.save()
-
-        return redirect('onlyfans_workpage')
+                                                           'month': self.data.days_in_month(pagination_page)})
 
 
 class CreateNewTable(LoginRequiredMixin,PermissionRequiredMixin,View):
@@ -122,7 +138,6 @@ class CreateNewTable(LoginRequiredMixin,PermissionRequiredMixin,View):
     def post(self, request):
 
         form = CreateOnlyfansTable(request.POST)
-
 
         month = date(month = int(request.POST['month']), day=1, year= 2023)
 
@@ -140,9 +155,10 @@ class CreateNewTable(LoginRequiredMixin,PermissionRequiredMixin,View):
                     client=Client.objects.filter(id=int(request.POST['client']))[0],
                     operator=User.objects.filter(id=int(request.POST['operator']))[0])
                 new_table.save()
+
         return redirect(f'http://127.0.0.1:8000/onlyfans/?page=1')
 
-
+'''
 class TableViewSet(viewsets.ModelViewSet):
     queryset = OnlyFansTable.objects.prefetch_related('tabledata_set').all()
     serializer_class = TableSerializer
@@ -207,12 +223,18 @@ def find():
     return json.dumps(final_data)
 
 
+'''
+
+
 class TableDataSet(viewsets.ModelViewSet):
     queryset = TableData.objects.all()
     serializer_class = DataSerializer
 
     def create(self, request, *args, **kwargs):
-        url = request.META.get('HTTP_REFERER')[int(request.META.get('HTTP_REFERER').find("=")) +1 ::]
+        if 'page ' in request.META.get('HTTP_REFERER'):
+            url = request.META.get('HTTP_REFERER')[int(request.META.get('HTTP_REFERER').find("=")) +1 ::]
+        else:
+            url = '1'
         # Тут мы получаем значение page= и цифру с которой было запрос что бы редиректнуть на эту же страницу
         table_data = {"data": request.data['data'],"data_type":str(request.data['data_type']), "table": int(request.data['table']),
                       "date": date(month = int(url), day= int(request.data['date']), year= 2023)}
@@ -237,12 +259,3 @@ class TableDataSet(viewsets.ModelViewSet):
             return Response({'status':'done'})
         else:
             return Response(serializer.errors)
-
-
-
-
-
-
-
-
-

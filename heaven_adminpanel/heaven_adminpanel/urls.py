@@ -27,6 +27,7 @@ urlpatterns = [
     path('charm-date/', include('charm_date.urls')),
     path('prime/', include("prime.urls")),
     path('golden_bride/', include("golden_bride.urls")),
-    path('jump_for_love/', include("jump_for_love.urls"))
+    path('jump_for_love/', include("jump_for_love.urls")),
+    path('romans_compass/', include("romans_compass.urls"))
 
 ]
