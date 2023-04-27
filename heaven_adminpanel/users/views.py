@@ -18,6 +18,9 @@ from users.serializers import ClientSerializer, PermissionSerializer
 
 
 
+
+
+
 class Register(View):
 
     template_name = 'registration/register.html'

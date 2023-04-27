@@ -1,13 +1,20 @@
-from django.contrib.auth.models import Permission
 from rest_framework import serializers
 from users.models import Client, User
 
 
 class ClientSerializer(serializers.ModelSerializer):
+    def get_full_name(self, object):
+        name = getattr(object, 'name')
+        surname = getattr(object, 'surname')
+        print(name)
+        print(surname)
+        return f'{name} {surname}'
+
+    full_name = serializers.SerializerMethodField('get_full_name')
 
     class Meta:
         model = Client
-        fields = '__all__'
+        fields = ["full_name"]
 
 
 

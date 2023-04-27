@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, HttpResponse, redirect
@@ -28,6 +30,7 @@ class ViewData:
         data = (int(i.operator.pk) for i in self.table_object.objects.all())
         return tuple(set(data))
 
+
     def make_get(self):
 
         data = {f'table_{a.id}': {'table':
@@ -37,7 +40,6 @@ class ViewData:
                                   }
                 for a in
                 self.table_object.objects.prefetch_related('tabledata_set').all()}
-
         return data
 
     def find(self):
@@ -158,6 +160,9 @@ class CreateNewTable(LoginRequiredMixin,PermissionRequiredMixin,View):
 
         return redirect(f'http://127.0.0.1:8000/onlyfans/?page=1')
 
+
+
+
 '''
 class TableViewSet(viewsets.ModelViewSet):
     queryset = OnlyFansTable.objects.prefetch_related('tabledata_set').all()
@@ -259,3 +264,58 @@ class TableDataSet(viewsets.ModelViewSet):
             return Response({'status':'done'})
         else:
             return Response(serializer.errors)
+
+'''
+class Test:
+
+    def get_json_from_base(self):
+        table_list = OnlyFansTable.objects.prefetch_related('tabledata_set').filter(operator=3)
+        serializer = TableSerializer
+        for i in table_list:
+            #print(json.dumps(serializer(i).data))
+        #print(serializer(table_list[0]).data)
+
+#{client_name: 'Elena', table_type: 'OP',  'day_1': 1}A
+
+
+a = Test()
+
+a.get_json_from_base()
+
+'''
+
+
+class TableView(viewsets.ModelViewSet):
+
+
+    queryset = OnlyFansTable.objects.prefetch_related('tabledata_set').all().order_by('-date')
+    serializer_class = TableSerializer
+    def list(self,request):
+
+        queryset = OnlyFansTable.objects.prefetch_related('tabledata_set').all().order_by('-date')
+        serializer_class = TableSerializer
+
+        user_group = request.user.groups.all()
+
+        if request.user.is_staff:
+
+            table_list = OnlyFansTable.objects.prefetch_related('tabledata_set').filter(date=f'2023-01-{request.query_params.get("month")}')
+            data = json.dumps(serializer_class(table_list, many=True).data)
+            return Response(data)
+
+        if user_group.filter(name='Operator'):
+
+            table_list = OnlyFansTable.objects.prefetch_related('tabledata_set').filter(operator=int(request.user.pk),
+                                                                                        date=datetime(year=2023, day=1,
+                                                                                        month=int(request.query_params.get("month"))))
+
+            data = json.dumps(serializer_class(table_list, many=True).data)
+            return Response(data)
+
+
+
+
+
+
+
+
