@@ -17,10 +17,6 @@ from rest_framework import viewsets
 from users.serializers import ClientSerializer, PermissionSerializer
 
 
-
-
-
-
 class Register(View):
 
     template_name = 'registration/register.html'
@@ -146,8 +142,4 @@ class PermissionList(APIView):
         if serializer.is_valid():
             return Response({"permission_list": serializer.validated_data})
         else: print(serializer.errors)
-
-
-
-
 

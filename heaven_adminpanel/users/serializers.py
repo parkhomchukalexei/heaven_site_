@@ -28,3 +28,4 @@ class PermissionSerializer(serializers.ModelSerializer):
 
     def get_user_permissions(self, obj):
         return list(obj._user_get_permissions("all"))
+

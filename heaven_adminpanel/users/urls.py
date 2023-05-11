@@ -17,5 +17,4 @@ urlpatterns = [
     path('', include(router.urls)),
     path('permissions/', PermissionList.as_view(), name='permission_list'),
     path('registration/', include('rest_registration.api.urls')),
-
 ]
