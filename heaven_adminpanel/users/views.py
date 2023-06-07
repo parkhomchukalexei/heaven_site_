@@ -14,7 +14,7 @@ from users.forms import UserCreationForm
 from users.models import Client, User
 from rest_framework.views import APIView, Response
 from rest_framework import viewsets
-from users.serializers import ClientSerializer, PermissionSerializer
+from users.serializers import ClientSerializer, PermissionSerializer, UserSerializer
 
 
 class Register(View):
@@ -83,7 +83,6 @@ class ClientAPI(viewsets.ModelViewSet):
 
 
 
-
 class ClientList(LoginRequiredMixin,View):
 
     template_name = 'client/client_list.html'
@@ -143,3 +142,14 @@ class PermissionList(APIView):
             return Response({"permission_list": serializer.validated_data})
         else: print(serializer.errors)
 
+
+class UserAndClientInfo(APIView):
+
+    def get(self, request):
+        operator_list = User.objects.filter(groups__name='Operator')
+        client_list = Client.objects.all()
+
+        operator = UserSerializer(operator_list, many=True).data
+        client = ClientSerializer(client_list, many=True).data
+        response = json.dumps({'operator': operator, 'client': client})
+        return Response(data=json.loads(response))

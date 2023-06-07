@@ -6,15 +6,18 @@ class ClientSerializer(serializers.ModelSerializer):
     def get_full_name(self, object):
         name = getattr(object, 'name')
         surname = getattr(object, 'surname')
-        print(name)
-        print(surname)
         return f'{name} {surname}'
 
+    def get_id(self, object):
+        id = getattr(object, 'pk')
+        return int(id)
+
     full_name = serializers.SerializerMethodField('get_full_name')
+    id = serializers.SerializerMethodField('get_id')
 
     class Meta:
         model = Client
-        fields = ["full_name"]
+        fields = ["full_name", "id"]
 
 
 
@@ -29,3 +32,9 @@ class PermissionSerializer(serializers.ModelSerializer):
     def get_user_permissions(self, obj):
         return list(obj._user_get_permissions("all"))
 
+
+class UserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = '__all__'

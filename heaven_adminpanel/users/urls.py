@@ -1,10 +1,12 @@
 
 from django.urls import path, include
 from rest_framework import routers
-from users.views import Register, CreateClient, ClientList, ClientPage, DeleteClient, ClientAPI, PermissionList
+from users.views import Register, CreateClient, ClientList, ClientPage, DeleteClient, ClientAPI, PermissionList, \
+    UserAndClientInfo
 
 router = routers.SimpleRouter()
 router.register(r'client_api', ClientAPI, basename='client')
+# router.register(r'userandclientepi', UserAndClientInfo, basename='userandclient')
 
 
 urlpatterns = [
@@ -17,4 +19,5 @@ urlpatterns = [
     path('', include(router.urls)),
     path('permissions/', PermissionList.as_view(), name='permission_list'),
     path('registration/', include('rest_registration.api.urls')),
+    path('userinfo', UserAndClientInfo.as_view(), name='userandclient')
 ]
